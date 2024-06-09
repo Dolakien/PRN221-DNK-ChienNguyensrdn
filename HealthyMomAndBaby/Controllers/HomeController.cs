@@ -1,4 +1,6 @@
+using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.Models;
+using HealthyMomAndBaby.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,14 +9,16 @@ namespace HealthyMomAndBaby.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IAccountService _accountService;
+        public HomeController(ILogger<HomeController> logger, IAccountService accountService)
         {
             _logger = logger;
+            _accountService = accountService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            
             return View();
         }
 
