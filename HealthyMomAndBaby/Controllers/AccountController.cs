@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyMomAndBaby.Controllers
 {
+    [Route("Account")]
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
@@ -10,11 +11,14 @@ namespace HealthyMomAndBaby.Controllers
         {
             _accountService = accountService;
         }
+
+        [HttpGet("")]
         public IActionResult Index()
         {
             return View();
         }
-        [HttpPost]
+
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(string username, string password)
         {
             var account = await _accountService.Login(username, password);
