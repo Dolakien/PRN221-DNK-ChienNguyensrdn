@@ -18,7 +18,8 @@ namespace HealthyMomAndBaby.Controllers
             return View();
         }
 
-        [HttpPost("Login")]
+        [HttpPost]
+        [Route("Login")]
         public async Task<IActionResult> Login(string username, string password)
         {
             var account = await _accountService.Login(username, password);

@@ -16,7 +16,7 @@ namespace HealthyMomAndBaby.Controllers
             _accountService = accountService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             
             return View();
