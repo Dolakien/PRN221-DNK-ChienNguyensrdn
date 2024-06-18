@@ -48,6 +48,33 @@ namespace HealthyMomAndBaby.Service.Impl
             }
         }
 
+        public async Task Register(string username, string password, string email)
+        {
+            try
+            {
+                var account = new Account
+                {
+                    UserName = username,
+                    Password = password, // Storing password directly
+                    Email = email
+                };
+
+                await _accountRepository.AddAsync(account);
+                await _accountRepository.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                // For example, log to a file, database, or console
+                Console.WriteLine($"An error occurred while registering the account: {ex.Message}");
+
+                // Optionally, rethrow the exception to be handled at a higher level
+                throw;
+            }
+        }
+
+
+
         public Task UpdateAccountAsync(Account account)
 		{
 			throw new NotImplementedException();

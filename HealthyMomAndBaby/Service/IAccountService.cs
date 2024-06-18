@@ -8,5 +8,6 @@ namespace HealthyMomAndBaby.Service
 		Task UpdateAccountAsync(Account account);
 		Task DeleteAccountAsync(int id);
         Task<Account?> Login(string username, string password);
+        Task  Register(string username, string password, string email);
     }
 }

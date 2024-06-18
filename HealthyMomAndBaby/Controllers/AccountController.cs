@@ -1,4 +1,5 @@
-﻿using HealthyMomAndBaby.Service;
+﻿using HealthyMomAndBaby.Models.Request;
+using HealthyMomAndBaby.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyMomAndBaby.Controllers
@@ -38,6 +39,22 @@ namespace HealthyMomAndBaby.Controllers
                 // ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng.");
                 return View("Index"); // Hiển thị lại trang đăng nhập
             }
+        }
+        [HttpGet("Signup")]
+        public IActionResult Signup()
+        {
+            return View();
+        }
+
+        [HttpPost("Signup")]
+        public async Task<IActionResult> Signup( SignUpRequest model)
+        {
+           
+                 await _accountService.Register(model.Username, model.Password, model.Email);
+
+             
+
+            return View(model); // Show the signup page again with validation errors
         }
     }
 }

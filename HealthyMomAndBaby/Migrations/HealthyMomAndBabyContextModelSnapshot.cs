@@ -32,7 +32,7 @@ namespace HealthyMomAndBaby.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -43,11 +43,17 @@ namespace HealthyMomAndBaby.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("RoleId");
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Accounts");
                 });
@@ -175,8 +181,14 @@ namespace HealthyMomAndBaby.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
+
+                    b.Property<int>("ProductCategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -187,7 +199,26 @@ namespace HealthyMomAndBaby.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductCategoryId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("HealthyMomAndBaby.Entity.ProductCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ProductCategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("HealthyMomAndBaby.Entity.Review", b =>
@@ -335,6 +366,17 @@ namespace HealthyMomAndBaby.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HealthyMomAndBaby.Entity.Product", b =>
+                {
+                    b.HasOne("HealthyMomAndBaby.Entity.ProductCategory", "ProductCategory")
+                        .WithMany("Products")
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductCategory");
+                });
+
             modelBuilder.Entity("HealthyMomAndBaby.Entity.Review", b =>
                 {
                     b.HasOne("HealthyMomAndBaby.Entity.Account", "Account")
@@ -368,6 +410,11 @@ namespace HealthyMomAndBaby.Migrations
             modelBuilder.Entity("HealthyMomAndBaby.Entity.Order", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("HealthyMomAndBaby.Entity.ProductCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("HealthyMomAndBaby.Entity.Role", b =>
