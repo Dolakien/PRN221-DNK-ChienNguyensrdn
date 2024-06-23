@@ -34,6 +34,16 @@ namespace HealthyMomAndBaby.Service.Impl
             await _productRepository.SaveChangesAsync();
         }
 
+        public async Task<Product?> GetDetailProductAsync(int id)
+        {
+            return await _productRepository.GetAsync(id);
+        }
+
+        public async Task<List<Product>> ShowListProductAsync()
+        {
+            return await _productRepository.GetValuesAsync();
+        }
+
         public async Task UpdateProductAsync(Product product)
         {
             if (product == null)
