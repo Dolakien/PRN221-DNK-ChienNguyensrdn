@@ -1,61 +1,81 @@
-﻿using HealthyMomAndBaby.Models.Request;
+﻿using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.Service;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace HealthyMomAndBaby.Controllers
+namespace HealthyMomAndBaby.Api.Controllers
 {
-    [Route("Account")]
-    public class AccountController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class VouchersController : Controller
     {
-        private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService)
+        private readonly IVoucherService _voucherService;
+
+        public VouchersController(IVoucherService voucherService)
         {
-            _accountService = accountService;
+            _voucherService = voucherService;
         }
 
-        [HttpGet("")]
-        public IActionResult Index()
+        [HttpPost("add")]
+        public async Task<IActionResult> AddVoucher([FromBody] Voucher voucher)
         {
-            return View();
-        }
-
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(string username, string password)
-        {
-            var account = await _accountService.Login(username, password);
-
-            if (account != null)
+            try
             {
-                // Đăng nhập thành công, bạn có thể thực hiện các hành động sau đây, chẳng hạn như đặt các biến phiên làm việc, chuyển hướng, v.v.
-                // Ví dụ:
-                // HttpContext.Session.SetString("UserId", account.Id.ToString());
-                // return RedirectToAction("Dashboard", "Home");
-                return RedirectToAction("Index", "Home"); // Chuyển hướng đến trang chính
+                await _voucherService.AddVoucherAsync(voucher);
+                return Ok(new { message = "Voucher added successfully" });
             }
-            else
+            catch (Exception ex)
             {
-                // Đăng nhập thất bại, bạn có thể hiển thị thông báo lỗi hoặc chuyển hướng đến trang đăng nhập lại, v.v.
-                // Ví dụ:
-                // ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng.");
-                return View("Index"); // Hiển thị lại trang đăng nhập
+                return StatusCode(500, new { message = ex.Message });
             }
         }
-        [HttpGet("Signup")]
-        public IActionResult Signup()
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateVoucher([FromBody] Voucher voucher)
         {
-            return View();
+            try
+            {
+                await _voucherService.UpdateVoucherAsync(voucher);
+                return Ok(new { message = "Voucher updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
-        [HttpPost("Signup")]
-        public async Task<IActionResult> Signup( SignUpRequest model)
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteVoucher(int id)
         {
-           
-                 await _accountService.Register(model.Username, model.Password, model.Email);
+            try
+            {
+                await _voucherService.DeleteVoucherAsync(id);
+                return Ok(new { message = "Voucher deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
 
-             
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> GetVoucherDetails(int id)
+        {
+            var voucher = await _voucherService.GetVoucherAsync(id);
+            if (voucher == null)
+            {
+                return NotFound(new { message = $"Voucher with id {id} not found" });
+            }
+            return Ok(voucher);
+        }
 
-            return View(model); // Show the signup page again with validation errors
+        [HttpGet("list")]
+        public async Task<IActionResult> GetAllVouchers()
+        {
+            var vouchers = await _voucherService.GetAllVouchersAsync();
+            return Ok(vouchers);
         }
     }
 }
-

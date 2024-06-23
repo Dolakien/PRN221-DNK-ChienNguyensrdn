@@ -7,6 +7,7 @@
         public string Content { get; set; }
         public DateTime Date { get; set; }
         public int AuthorId { get; set; }
+        public bool IsDeleted { get; set; }
         public Account Author { get; set; }
     }
 }

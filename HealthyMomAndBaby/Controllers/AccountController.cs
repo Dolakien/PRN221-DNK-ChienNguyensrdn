@@ -1,4 +1,5 @@
-﻿using HealthyMomAndBaby.Models.Request;
+﻿using HealthyMomAndBaby.Entity;
+using HealthyMomAndBaby.Models.Request;
 using HealthyMomAndBaby.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,6 +56,50 @@ namespace HealthyMomAndBaby.Controllers
              
 
             return View(model); // Show the signup page again with validation errors
+        }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteAccount(int id)
+        {
+            try
+            {
+                await _accountService.DeleteAccountAsync(id);
+                return Ok(new { message = "Account deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> GetAccountDetails(int id)
+        {
+            var account = await _accountService.GetDetailProductAsync(id);
+            if (account == null)
+            {
+                return NotFound(new { message = $"Account with id {id} not found" });
+            }
+            return Ok(account);
+        }
+        [HttpGet("list")]
+        public async Task<IActionResult> ShowAccounts()
+        {
+            var accounts = await _accountService.ShowListProductAsync();
+            return Ok(accounts);
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateAccount([FromBody] Account account)
+        {
+            try
+            {
+                await _accountService.UpdateAccountAsync(account);
+                return Ok(new { message = "Account updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
     }
 }

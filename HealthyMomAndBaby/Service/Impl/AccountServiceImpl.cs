@@ -18,10 +18,23 @@ namespace HealthyMomAndBaby.Service.Impl
 			
 		}
 
-		public Task DeleteAccountAsync(int id)
+		public async Task DeleteAccountAsync(int id)
 		{
-			throw new NotImplementedException();
-		}
+            var account = await _accountRepository.GetAsync(id);
+            if (account == null)
+            {
+                throw new InvalidOperationException($"Account with id {id} not found.");
+            }
+
+            account.Status = true;
+            _accountRepository.Update(account);  
+            await _accountRepository.SaveChangesAsync();
+        }
+
+        public async Task<Account?> GetDetailProductAsync(int id)
+        {
+            return await _accountRepository.GetAsync(id);
+        }
 
         public async Task<Account?> Login(string username, string password)
         {
@@ -73,11 +86,34 @@ namespace HealthyMomAndBaby.Service.Impl
             }
         }
 
+        public async Task<List<Account>> ShowListProductAsync()
+        {
+            return await _accountRepository.GetValuesAsync();
+        }
 
+        public async Task UpdateAccountAsync(Account account)
+        {
+            if (account == null)
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
 
-        public Task UpdateAccountAsync(Account account)
-		{
-			throw new NotImplementedException();
-		}
-	}
+            var existingAccount = await _accountRepository.GetAsync(account.Id);
+            if (existingAccount == null)
+            {
+                throw new InvalidOperationException($"Account with id {account.Id} not found.");
+            }
+
+            existingAccount.UserName = account.UserName;
+            existingAccount.Password = account.Password;
+            existingAccount.Email = account.Email;
+            existingAccount.Status = account.Status;
+            existingAccount.RoleId = account.RoleId;
+            existingAccount.Role = account.Role;
+
+            _accountRepository.Update(existingAccount);  // Update method is synchronous
+            await _accountRepository.SaveChangesAsync();
+        }
+    }
 }
+

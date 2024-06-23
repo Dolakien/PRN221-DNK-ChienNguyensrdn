@@ -8,6 +8,7 @@
         public int Rating { get; set; }
         public string Comment { get; set; }
         public DateTime ReviewDate { get; set; }
+        public bool IsDeleted { get; set; }
         public Account Account { get; set; }
         public Product Product { get; set; }
 
