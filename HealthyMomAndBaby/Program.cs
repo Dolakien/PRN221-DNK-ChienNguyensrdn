@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using HealthyMomAndBaby.Extensions;
+using HealthyMomAndBaby.Service.Impl;
+using HealthyMomAndBaby.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 
 // Configure the DbContext with the connection string.
 builder.Services.AddDbContext<HealthyMomAndBabyContext>(options =>
