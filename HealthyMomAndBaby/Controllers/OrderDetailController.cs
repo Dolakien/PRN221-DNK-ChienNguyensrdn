@@ -61,8 +61,8 @@ namespace HealthyMomAndBaby.Controllers
             return View(orderDetail);
         }
 
-        // POST: OrderDetail/Edit/5
-        [HttpPost]
+        // PUT: OrderDetail/Edit/5
+        [HttpPut]
         public async Task<IActionResult> Edit(OrderDetail orderDetail)
         {
             if (ModelState.IsValid)
@@ -74,8 +74,8 @@ namespace HealthyMomAndBaby.Controllers
         }
 
 
-        // POST: OrderDetail/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // DELETE: OrderDetail/Delete/5
+        [HttpDelete, ActionName("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
             try

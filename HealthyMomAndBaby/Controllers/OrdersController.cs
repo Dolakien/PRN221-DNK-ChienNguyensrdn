@@ -63,7 +63,7 @@ namespace HealthyMomAndBaby.Controllers
             return View(order);
         }
 
-        // POST: Orders/Edit/5
+        // PUT: Orders/Edit/5
         [HttpPut]
         public async Task<IActionResult> Edit(Order order)
         {
@@ -75,8 +75,8 @@ namespace HealthyMomAndBaby.Controllers
             return View(order);
         }
 
-        // POST: Orders/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // DELETE: Orders/Delete/5
+        [HttpDelete, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try

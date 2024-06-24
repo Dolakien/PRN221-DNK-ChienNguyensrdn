@@ -19,6 +19,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 
 // Configure the DbContext with the connection string.
