@@ -54,7 +54,7 @@ namespace HealthyMomAndBaby.Service.Impl
             var existingOrderDetail = await _orderDetailRepository.GetAsync(orderDetail.Id);
             if (orderDetail == null)
             {
-                throw new InvalidOperationException($"Order with id {orderDetail.Id} not found.");
+                throw new InvalidOperationException($"Order Detail with id {orderDetail.Id} not found.");
             }
             existingOrderDetail.OrderId = orderDetail.OrderId;
             existingOrderDetail.ProductId = orderDetail.ProductId;
