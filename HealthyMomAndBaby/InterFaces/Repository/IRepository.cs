@@ -1,4 +1,8 @@
-﻿namespace HealthyMomAndBaby.InterFaces.Repository
+﻿using HealthyMomAndBaby.Entity;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
+namespace HealthyMomAndBaby.InterFaces.Repository
 {
     public interface IRepository<T>
     {
@@ -21,6 +25,6 @@
 
         Task SaveChangesAsync(CancellationToken cancellationToken = default);
         Task<List<T>?> GetValuesAsync(CancellationToken cancellationToken = default);
-
+        Task<List<T>?> GetListByIdAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
     }
 }

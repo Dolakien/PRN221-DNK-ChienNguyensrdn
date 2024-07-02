@@ -4,6 +4,8 @@ using HealthyMomAndBaby.InterFaces.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System;
+using System.Linq.Expressions;
 
 namespace HealthyMomAndBaby.Repositories
 {
@@ -27,6 +29,10 @@ namespace HealthyMomAndBaby.Repositories
         public async Task<List<T>?> GetValuesAsync(CancellationToken cancellationToken = default)
         {
             return await Get().ToListAsync(cancellationToken);
+        }
+        public async Task<List<T>?> GetListByIdAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return await Get().Where(predicate).ToListAsync(cancellationToken);
         }
 
         public async Task<T?> GetAsync(int id, CancellationToken cancellationToken = default)
@@ -77,5 +83,7 @@ namespace HealthyMomAndBaby.Repositories
             }
             _transaction = _healthyMomAndBabyContext.Database.BeginTransaction();
         }
+
+
     }
 }
