@@ -1,675 +1,184 @@
 ﻿@{
     ViewData["Title"] = "Home";
+    @using HealthyMomAndBaby;
+    @using HealthyMomAndBaby.Models
+    @using HealthyMomAndBaby.Entity
+    var loggedInAccount = ViewData["LoggedInAccountId"] as HealthyMomAndBaby.Entity.Account;
 }
-
+@model IEnumerable<Product>
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Title</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+<bo lang="en">
+    <head>
+        <title>Title</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-  </head>
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+              crossorigin="anonymous" />
+    </head>
 
-  <body>
-    <div
-      class="d-flex align-items-center justify-content-between"
-      style="background-color: #fff4fc; height: 40px"
-    >
-      <div></div>
-      <div class="d-flex align-items-center">
-            <a class="btn btn-primary" href="@Url.Action("", "Account")">Login</a>
-        <a class="mx-4">Đăng Ký</a>
-      </div>
-    </div>
-    <div
-      id="carouselExampleControls"
-      class="carousel slide"
-      data-bs-ride="carousel"
-    >
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img
-            src="https://cdn1.concung.com/img/adds/2024/05/1716552222-HOME(1).png"
-            class="d-block w-100"
-            alt="..."
-          />
-        </div>
-        <div class="carousel-item">
-          <img
-            src="https://cdn1.concung.com/img/adds/2024/05/1716522893-HOME.png"
-            class="d-block w-100"
-            alt="..."
-          />
-        </div>
-        <div class="carousel-item">
-          <img
-            src="https://cdn1.concung.com/img/adds/2024/04/1713495643-HOME.png"
-            class="d-block w-100"
-            alt="..."
-          />
-        </div>
-      </div>
-      <button
-        class="carousel-control-prev"
-        type="button"
-        data-bs-target="#carouselExampleControls"
-        data-bs-slide="prev"
-      >
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button
-        class="carousel-control-next"
-        type="button"
-        data-bs-target="#carouselExampleControls"
-        data-bs-slide="next"
-      >
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-    <div
-      class="d-flex align-items-center"
-      style="height: 50px; margin-top: 10px; justify-content: space-evenly"
-    >
-      <div>
-        <label for="">Thể Loại:</label>
-        <select name="" id="" style="width: 200px; height: 30px">
-          <option value="1">Tất cả</option>
-          <option value="1">Sữa</option>
-          <option value="1">Sữa</option>
-          <option value="1">Sữa</option>
-        </select>
-      </div>
-      <div>
-        <label for="">Giá:</label>
-        <select name="" id="" style="width: 200px; height: 30px">
-          <option value="1">100000</option>
-          <option value="1">100000</option>
-          <option value="1">100000</option>
-          <option value="1">100000</option>
-        </select>
-        <label for="">-</label>
-        <select name="" id="" style="width: 200px; height: 30px">
-          <option value="1">100000</option>
-          <option value="1">100000</option>
-          <option value="1">100000</option>
-          <option value="1">100000</option>
-        </select>
-      </div>
-      <form class="d-flex align-items-center my-2">
-        <input
-          class="form-control d-flex align-items-center mx-2"
-          style="height: 2rem"
-          type="text"
-          placeholder="Search"
-        />
-        <button
-          class="btn btn-success d-flex align-items-center"
-          style="height: 2rem"
-          type="submit"
-        >
-          Search
-        </button>
-      </form>
-      <nav aria-label="Page navigation example">
-        <ul class="pagination" style="margin: 0">
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-    <div
-      class="body justify-content-evenly w-100 d-flex flex-wrap"
-      style="height: 75vh; padding-top: 30px; background-color: #f5f7fd"
-    >
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-      <div
-        class="card justify-content-center text-center"
-        style="min-width: 18rem; height: 18rem"
-      >
-        <div>
-          <img
-            class="img-thumbnail"
-            src="https://ibrand.vn/wp-content/uploads/2022/10/logo-me-va-be-35-min.png"
-            alt="Title"
-            style="height: 150px; border: none"
-          />
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">Title</h4>
-          <p class="card-text">Category</p>
-          <p class="card-text">Price</p>
-        </div>
-      </div>
-    </div>
+    <body style="background-color: #f7f7f7; width: 100vw; overflow-x: hidden;">
+        <div style="height: 64px; background-color: white">
 
-    <footer>
-      <div class="nav footer-nav">
-        <div class="d-block w-100" style="">
-          <div
-            class="container d-flex font-13"
-            style="
-              padding-top: 20px;
-              z-index: 1;
-              border-top: 1px solid #eaeaea;
-              line-height: 16px;
-              position: relative;
-            "
-          >
-            <div class="widget pull-left" style="width: 300px">
-              <h5 class="widget-title mb-0">
-                <span class="font-concung">Công Ty Cổ Phần Con Cưng</span>
-                <br /><span
-                  class="font-weight-normal d-block"
-                  style="margin-top: 4px"
-                  >Thành viên của Tập đoàn
-                  <span class="font-medium">CCI Group</span></span
-                >
-              </h5>
-              <div class="link-list mt-10">
-                <li>
-                  <span class="font-medium">Email: </span
-                  ><a href="mailto:cskh@concung.com">cskh@concung.com</a>
-                </li>
-                <li>
-                  <span class="font-medium">Điện thoại:</span> 028 7300 6609
-                </li>
-                <li style="width: 290px">
-                  <span class="font-medium">ĐKKD:</span> 66 Nguyễn Du, phường
-                  Bến Nghé, Quận 1, Tp. Hồ Chí Minh
-                </li>
-                <li>
-                  <span class="font-medium">Văn phòng:</span> Tầng 14 Tòa nhà
-                  Phú Mỹ Hưng Tower, 08 Hoàng Văn Thái, P.Tân Phú, Q.7, HCM
-                </li>
-              </div>
+            <div class="">
+                <div class="row">
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
+                        <a class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                            Home
+                        </a>
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
+                        <a class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                            History
+                        </a>
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
+                        <a class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                            Blog
+                        </a>
+                    </div>
+                    
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-4 d-flex justify-content-end align-items-center " style="height: 64px;">
+                       
+                        @if (loggedInAccount != null)
+                        {
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuNlrvrFMLORKsLtoNNG6J0ulGeOgOBuzcNw&s"
+                                 alt=""
+                                 width="40"
+                                 height="40"
+                                 class="rounded-circle mx-4" />
+                            <h3 class="mx-4">Trần Thanh Sơn</h3>
+                            <div>
+                                <a href="@Url.Action("Cart", "Order")"><i class="fa-solid fa-cart-shopping" style="font-size: 30px;"></i></a>
+                            </div>
+                            <a href="@Url.Action("logout", "Account")" class="btn btn-danger" style="margin-left: 20px; margin-right: 20px;">
+                                Logout
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" style="margin-left: 20px; margin-right: 20px;" href="@Url.Action("", "Account")">
+                                Login
+                            </a>
+                            <a class="btn btn-primary" style="margin-left: 20px; margin-right: 20px;" href="@Url.Action("Signup", "Account")">
+                                SignUp
+                            </a>
+                        }
+                       
+                    </div>
+
+                </div>
             </div>
-
-            <div
-              class="widget pull-left"
-              style="width: 200px; margin-left: 100px"
-            >
-              <h5 class="widget-title font-concung" style="margin-bottom: 10px">
-                Về Con Cưng
-              </h5>
-              <div class="link-list">
-                <li>
-                  <a href="https://concung.com/gioi-thieu.html"
-                    >Giới thiệu về Con Cưng</a
-                  >
-                </li>
-                <li>
-                  <a href="https://tuyendung.concung.com"
-                    >Tuyển dụng Khối Văn Phòng</a
-                  >
-                </li>
-                <li>
-                  <a href="https://vieclam.concung.com"
-                    >Tuyển dụng Khối Siêu Thị</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="https://concung.com/chinh-sach-bao-mat-thong-tin.html"
-                    >Chính sách bảo mật</a
-                  >
-                </li>
-                <li>
-                  <a href="https://concung.com/dieu-khoan-su-dung.html"
-                    >Điều khoản chung</a
-                  >
-                </li>
-              </div>
-              <h5 class="widget-title font-concung" style="margin-top: 30px">
-                Hỗ Trợ Khách Hàng
-              </h5>
-              <div class="link-list">
-                <li>
-                  <a href="https://einvoice.concung.com/">Tra cứu hoá đơn</a>
-                </li>
-                <li>
-                  <a href="https://concung.com/chinh-sach-giao-hang.html"
-                    >Mua &amp; giao nhận Online</a
-                  >
-                </li>
-                <li>
-                  <a href="https://concung.com/hinh-thuc-thanh-toan.html"
-                    >Qui định &amp; hình thức thanh toán</a
-                  >
-                </li>
-                <li>
-                  <a href="https://concung.com/chinh-sach-bao-hanh.html"
-                    >Bảo hành &amp; Bảo trì</a
-                  >
-                </li>
-                <li>
-                  <a href="https://concung.com/chinh-sach-doi-tra-hang.html"
-                    >Đổi trả &amp; Hoàn tiền</a
-                  >
-                </li>
-              </div>
-            </div>
-
-            <div
-              class="widget pull-left"
-              style="width: 245px; margin-left: 42px"
-            >
-              <h5
-                class="widget-title font-concung mb-10"
-                style="margin-bottom: 10px"
-              >
-                Chấp Nhận Thanh Toán
-              </h5>
-              <div class="link-list">
-                <img
-                  class=""
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/visa-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class=""
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/mastercard-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class=""
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/jcb-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class=""
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/atm-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class=""
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/cod.png"
-                  height="24"
-                  alt="Visa Pay"
-                /><br />
-
-                <img
-                  class="mt-10"
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/vnpay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class="mt-10"
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/zalo-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class="mt-10"
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/momo-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class="mt-10"
-                  style="margin-right: 6px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/shoppe-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-                <img
-                  class="mt-10"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/kredivo-pay.png"
-                  height="24"
-                  alt="Visa Pay"
-                />
-              </div>
-              <h5 class="widget-title font-concung" style="margin-top: 30px">
-                Đối Tác Vận Chuyển
-              </h5>
-              <div class="link-list d-block mb-15 mt-10">
-                <img
-                  class=""
-                  style="margin-right: 8px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/grap.png"
-                  height="24"
-                  alt="Grap"
-                />
-                <img
-                  class=""
-                  style="margin-right: 8px"
-                  src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/ahamove.png"
-                  height="24"
-                  alt="Ahamamove"
-                />
-              </div>
-              <a
-                target="_bank"
-                href="http://online.gov.vn/HomePage/CustomWebsiteDisplay.aspx?DocId=24658"
-              >
-                <img
-                  class="img-fluid"
-                  src="https://cdn1.concung.com/themes/desktop4.1/img/noticed@3x.png"
-                  width="130"
-                  height="45"
-                  alt="#"
-                />
-              </a>
-            </div>
-
-            <div class="widget" style="width: 220px; margin-left: 90px">
-              <h5 class="widget-title font-concung">
-                Tải Ứng Dụng Nhận Ngay Nhiều <br />
-                Đãi Hấp Dẫn Dành Cho Ba Mẹ
-              </h5>
-              <div
-                class="link-list d-lg-flex mb-3 justify-content-between align-items-center"
-              >
-                <p class="mb-0" style="margin-right: 20px">
-                  <img
-                    src="https://cdn1.concung.com/themes/desktop4.1/img/scanapp.svg"
-                    height="90"
-                    alt="Tải App Ngay"
-                  />
-                </p>
-
-                <p class="mb-15 d-block pt-2">
-                  <a
-                    class="d-block mb-20"
-                    href="https://apps.apple.com/app/id1442035575"
-                  >
-                    <img
-                      src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/app-ios.png"
-                      width="108"
-                      alt="Tải App Ngay Ios"
-                    /> </a
-                  ><a
-                    href="https://play.google.com/store/apps/details?id=com.concung.ecapp"
-                  >
-                    <img
-                      src="https://cdn1.concung.com/themes/desktop4.1/image/v40/style/app-android.png"
-                      width="108"
-                      alt="Tải App Ngay Android"
-                    />
-                  </a>
-                </p>
-              </div>
-
-              <h5 class="widget-title font-concung">Kết Nối Với Chúng Tôi</h5>
-              <div
-                class="link-list d-lg-flex mb-3 mt-2 justify-content-between align-items-center"
-              >
-                <a
-                  target="_blank"
-                  class="text-center"
-                  style="width: 58px"
-                  href="https://www.facebook.com/concung"
-                >
-                  <i class="icons icon-facebook icon-lg mb-10"></i>
-                  Facebook </a
-                ><a
-                  target="_blank"
-                  class="text-center"
-                  href="https://zalo.me/1427741676348666934"
-                  style="width: 58px"
-                >
-                  <i class="icons icon-zalo icon-lg mb-10"></i>
-                  Zalo
-                </a>
-                <a
-                  target="_blank"
-                  style="width: 58px"
-                  class="text-center"
-                  href="https://www.youtube.com/channel/UCSFtVu9gQCdEWNv58X70Wxw"
-                >
-                  <i class="icons icon-youtube icon-lg mb-10"></i>
-                  Youtube
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div
-          class="container d-flex font-13"
-          style="
-            padding-top: 15px;
-            padding-bottom: 15px;
-            z-index: 1;
-            border-top: 1px solid #eaeaea;
-          "
-        >
-          © 2024 Con Cưng. Tất cả các quyền được bảo lưu.
+
         </div>
-      </div>
-    </footer>
-    <!-- Bootstrap JavaScript Libraries -->
+        <!-- hình động-->
+        <div id="carouselExampleAutoplaying" class="carousel slide container" data-bs-ride="carousel">
+            <div class="carousel-inner" style="margin-left:58px">
+                <div class="carousel-item active">
+                    <img src="https://cdn1.concung.com/img/adds/2024/06/1719213418-HOME(2).png" class="d-block" width="1132" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://cdn1.concung.com/img/adds/2024/06/1718680985-Concung-banner2_Web980x320(1).png" class="d-block" width="1132" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://cdn1.concung.com/img/adds/2024/04/1713495643-HOME.png" class="d-block" width="1132" alt="...">
+                </div>
+            </div>
+            <button class="carousel-control-prev" style="height: 380px;" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" style="height: 380px;" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+
+            <!-- Filtter bar-->
+            <div class="container d-flex align-items-center" style="height: 64px; background-color: white; margin-top: 20px; border-radius: 25px; width: 1132px; margin-left: 56px">
+                <div class="container text-center">
+                    <div class="row">
+                        <div class="col-3 d-flex align-items-center">
+                            <i class="fa-solid fa-magnifying-glass" style="margin-right: 20px;"></i>
+                            <input type="text" class="form-control" id="exampleFormControlInput1">
+                        </div>
+                        <div class="col d-flex align-items-center">
+                            <span style="margin-right: 10px;">From: </span>
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Select price</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                            <span style="margin-left: 10px; margin-right: 10px;">To: </span>
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Select price</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                        <div class="col d-flex align-items-center">
+                            <span style="margin-right: 10px;">Category:</span>
+                            <select class="form-select" aria-label="Default select example">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- body-->
+        <div class="container text-center">
+            <div class="row" style="margin-left: 50px;">
+                @foreach (var product in Model)
+                {
+                    <div class="col-2" style="margin-top: 20px; margin-left: 10px; margin-right: 10px; height: 330px; width: 210px; background-color: white; border-radius: 25px;">
+                        <div>
+                            <img style="margin-bottom: 10px;
+          margin-top: 10px;
+          border-radius: 21px;
+          max-width: 175px;
+          max-height: 175px;"
+                            src="@product.Image" alt="" width="175" height="175">
+                        </div>
+                        <div style="line-height: 18px; font-size: 14px;">@product.ProductName</div>
+                        <div style="font-weight: bold; font-size: 18px; color: red;">@product.Price đ</div>
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("getById","Product", new {id = product.Id})"><i class="fa-solid fa-circle-info" style="font-size: 30px; color: #0d99ff;"></i></a>
+                            <a href="@Url.Action("AddToCart","Order", new {id = product.Id, quantity = 1, Page = "Home"})"><i class="fa-solid fa-cart-shopping" style="font-size: 30px; color: #009600;"></i></a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Footer-->
+        <div style="height: 200px; background-color: #0d99ff; margin-top: 20px;">
+        </div>
+    </body>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-  </body>
-</html>
+    </html>

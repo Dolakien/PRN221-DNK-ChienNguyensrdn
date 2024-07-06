@@ -8,6 +8,7 @@
         public double Discount { get; set; }
         public DateTime ExpiryDate { get; set; }
         public int CreateBy { get; set; }
+        public bool IsDeleted { get; set; }
         public Account CreatedBy { get; set; }
 
     }

@@ -74,11 +74,6 @@ namespace HealthyMomAndBaby.DataContext
                 .HasOne(v => v.CreatedBy)
                 .WithMany()
                 .HasForeignKey(v => v.CreateBy);
-
-            modelBuilder.Entity<Product>()
-                .HasOne(p => p.ProductCategory)
-                .WithMany(pc => pc.Products)
-                .HasForeignKey(p => p.ProductCategoryId);
         }
     }
 }
