@@ -29,6 +29,8 @@ namespace HealthyMomAndBaby.Controllers
         public async Task<IActionResult> Products()
         {
             var products = await _productService.ShowListProductAsync();
+            var categories = await _productCategoryService.GetProductCategories();
+            ViewData["categories"] = categories;
             return View("Product", products);
         }
 

@@ -4,6 +4,7 @@
     @using HealthyMomAndBaby.Models
     @using HealthyMomAndBaby.Entity
     @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+    var listCategory = ViewData["Categories"] as List<ProductCategory>;
 }
 @model IEnumerable<Product>
 <!DOCTYPE html>
@@ -210,22 +211,37 @@
               <tbody>
                  @foreach (var product in Model)
                  {
+                     <form asp-controller="Product" asp-action="update" method="post">
                 <tr>
+                    @{
+                     var isdelete = !product.IsDeleted;
+                     var fillter = listCategory?.Where(x => x.ProductCategoryName != product.ProductCategory.ProductCategoryName);
+                    }
                   <td scope="row">@product.Id</td>
-                  <td><input class="form-control" type="type" name="name" value="@product.ProductName" /></td>
-                  <td><input class="form-control" type="type" name="name" value="@product.Image" /></td>
+                  <input class="form-control" type="hidden" name="id" value="@product.Id" />
+                  <td><input class="form-control" type="text" name="productName" value="@product.ProductName" /></td>
+                  <td><input class="form-control" type="text" name="image" value="@product.Image" /></td>
                   <td>
-                  @product.Description
+                  <textarea class="form-control" type="text" name="description" >@product.Description</textarea>
                   </td>
-                  <td>@product.Price</td>
-                  <td>@product.Quantity</td>
-                  <td>@product.ProductCategory.ProductCategoryName</td>
-                  <td>@product.IsDeleted</td>
+                  <td><input class="form-control" type="text" name="price" value="@product.Price" /></td>
+                  <td><input class="form-control" type="number" name="quantity" value="@product.Quantity" /></td>
+                  <td><select class="form-select" name="categoryId" aria-label="Default select example">
+                      <option value="@product.ProductCategory.Id" selected>@product.ProductCategory.ProductCategoryName</option>
+                      @foreach( var item in fillter){
+                      <option value="@item.Id">@item.ProductCategoryName</option>
+                      }
+                    </select></td>
+                  <td><select class="form-select" name="isDelete" aria-label="Default select example">
+                      <option value="@product.IsDeleted" selected>@product.IsDeleted</option>
+                      <option value="@isdelete">@isdelete</option>
+                    </select></td>
                   <td>
-                    <i class="fa-solid fa-pen-to-square edit"></i>
+                    <button class="btn" style="border: none" type="submit"><i class="fa-solid fa-pen-to-square edit"></i></button>
                     <a href="@Url.Action("delete","Product", new {id = product.Id})"><i class="fa-solid fa-trash delete"></i></a>
                   </td>
                 </tr>
+                </form>
                 }
               </tbody>
             </table>

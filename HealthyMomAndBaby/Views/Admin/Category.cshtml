@@ -218,7 +218,7 @@
                   </td>
                   <td>
                     <button class="btn" style="border: none" type="submit"><i class="fa-solid fa-pen-to-square edit"></i></button>
-                    <button class="btn" style="border: none" disabled="@isAdmin" type="button" href="@Url.Action("delete","Category", new {id = category.Id})"><i class="fa-solid fa-trash delete"></i></button>
+                    <a href="@Url.Action("delete","Category", new {id = category.Id})"><i class="fa-solid fa-trash delete"></i></a>
                 </td>
                 </tr>
                 </form>

@@ -44,15 +44,18 @@ namespace HealthyMomAndBaby.Controllers
         }
 
         // POST: Product/Edit/5
-        [HttpPost]
-        public async Task<IActionResult> Edit(Product product)
+        [HttpPost("update")]
+        public async Task<IActionResult> Edit(UpdateProduct product)
         {
-            if (ModelState.IsValid)
+            try
             {
                 await _productService.UpdateProductAsync(product);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Products", "Admin"); ;
             }
-            return View(product);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         // POST: Product/Delete/5

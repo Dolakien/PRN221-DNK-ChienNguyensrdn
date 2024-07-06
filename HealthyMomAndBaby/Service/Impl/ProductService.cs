@@ -64,7 +64,7 @@ namespace HealthyMomAndBaby.Service.Impl
             return await _productRepository.Get().Include(x => x.ProductCategory).ToListAsync();
         }
 
-        public async Task UpdateProductAsync(Product product)
+        public async Task UpdateProductAsync(UpdateProduct product)
         {
             if (product == null)
             {
@@ -76,12 +76,14 @@ namespace HealthyMomAndBaby.Service.Impl
             {
                 throw new InvalidOperationException($"Product with id {product.Id} not found.");
             }
-
+            var category = await _productCategoryRepository.Get().FirstAsync(x => x.Id == product.CategoryId);
             existingProduct.ProductName = product.ProductName;
             existingProduct.Description = product.Description;
             existingProduct.Image = product.Image;
             existingProduct.Price = product.Price;
+            existingProduct.IsDeleted = product.IsDeleted;
             existingProduct.Quantity = product.Quantity;
+            existingProduct.ProductCategory = category;
 
             _productRepository.Update(existingProduct);  // Update method is synchronous
             await _productRepository.SaveChangesAsync();
