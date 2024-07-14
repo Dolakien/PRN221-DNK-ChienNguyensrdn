@@ -133,63 +133,6 @@ namespace HealthyMomAndBaby.Controllers
             }
         }
 
-
-    //    [HttpPost("point/{id}")]
-    //    public async Task<IActionResult> AddPoint(int id)
-    //    {
-     //       await _accountService.AddPointAsync(id);
-     //       return View(id);
-     //   }
-
-
-        [HttpGet("point/details/{id}")]
-        public async Task<IActionResult> GetPointDetails(int id)
-        {
-            var point = await _accountService.GetDetailPointAsync(id);
-            if (point == null)
-            {
-                return NotFound(new { message = $"Point with id {id} not found" });
-            }
-            return Ok(point);
-        }
-
-
-        [HttpGet("point/list")]
-        public async Task<IActionResult> ShowPoints()
-        {
-            var points = await _accountService.ShowListPointAsync();
-            return Ok(points);
-        }
-
-
-        [HttpPost("point/update")]
-        public async Task<IActionResult> UpdatePoint([FromBody] Point point)
-        {
-            try
-            {
-                await _accountService.UpdatePointAsync(point);
-                return Ok(new { message = "Point updated successfully" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
-        }
-
-
-        [HttpPost("point/delete/{id}")]
-        public async Task<IActionResult> Deletepoint(int id)
-        {
-            try
-            {
-                await _accountService.DeletePointAsync(id);
-                return Ok(new { message = "Point deleted successfully" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
-        }
     }
 }
 

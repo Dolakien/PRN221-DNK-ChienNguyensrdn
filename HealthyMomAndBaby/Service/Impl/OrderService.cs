@@ -54,7 +54,7 @@ namespace HealthyMomAndBaby.Service.Impl
                 OrderDate = DateTime.Now,
                 User = account
             };
-
+            account.Point = (int) Math.Round(order.TotalPrice / 1000);
             await _orderRepository.AddAsync(newOrder);
             await _orderRepository.SaveChangesAsync();
         }

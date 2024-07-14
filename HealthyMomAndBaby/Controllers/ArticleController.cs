@@ -18,11 +18,11 @@ namespace HealthyMomAndBaby.Controllers
         }
 
         // GET: Article
-        [HttpGet]
+        [HttpGet("blog")]
         public async Task<IActionResult> Index()
         {
             var article = await _articleService.ShowListArticleAsync();
-            return View(article);
+            return View("Article",article);
         }
 
         // GET: Article/Details/5
