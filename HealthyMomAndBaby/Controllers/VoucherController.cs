@@ -1,5 +1,7 @@
 ﻿using HealthyMomAndBaby.Entity;
+using HealthyMomAndBaby.Models.Request;
 using HealthyMomAndBaby.Service;
+using HealthyMomAndBaby.Service.Impl;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace HealthyMomAndBaby.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("Voucher")]
     public class VouchersController : Controller
     {
         private readonly IVoucherService _voucherService;
@@ -19,12 +20,12 @@ namespace HealthyMomAndBaby.Api.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddVoucher([FromBody] Voucher voucher)
+        public async Task<IActionResult> AddVoucher(CreateVoucherRequest voucher)
         {
             try
             {
                 await _voucherService.AddVoucherAsync(voucher);
-                return Ok(new { message = "Voucher added successfully" });
+                return RedirectToAction("Vouchers", "Admin"); ;
             }
             catch (Exception ex)
             {
@@ -46,7 +47,7 @@ namespace HealthyMomAndBaby.Api.Controllers
             }
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpGet("delete")]
         public async Task<IActionResult> DeleteVoucher(int id)
         {
             try

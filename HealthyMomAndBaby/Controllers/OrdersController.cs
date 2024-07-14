@@ -1,25 +1,224 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using HealthyMomAndBaby.DataContext;
+﻿using Microsoft.AspNetCore.Mvc;
 using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.Service;
-using HealthyMomAndBaby.Service.Impl;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
+using HealthyMomAndBaby.Models.Request;
 
 namespace HealthyMomAndBaby.Controllers
 {
+    [Route("Order")]
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
+        private readonly IVoucherService _voucherService;
 
-        public OrdersController(IOrderService orderService)
+        public OrdersController(IOrderService orderService, 
+            IProductService productService,
+            IVoucherService voucherService)
         {
             _orderService = orderService;
+            _productService = productService;
+            _voucherService = voucherService;
+        }
+
+        [HttpGet("Cart")]
+        public IActionResult Cart()
+        {
+            string listCart = HttpContext.Session?.GetString("Cart");
+            if (listCart != null)
+            {
+                var cart = JsonConvert.DeserializeObject<HashSet<CartRequest>>(listCart);
+
+                // Bây giờ bạn có thể sử dụng đối tượng loggedInAccount trong action này
+                ViewData["Cart"] = cart;
+            }
+
+            return View("Cart");
+        }
+
+        [HttpGet("Increase/{id}")]
+        public async Task<IActionResult> IncreaseItem(int id)
+        {
+            var product = await _productService.GetDetailProductAsync(id);
+            var cartJson = HttpContext.Session.GetString("Cart");
+            HashSet<CartRequest> cart;
+            if (string.IsNullOrEmpty(cartJson))
+            {
+                cart = new HashSet<CartRequest>();
+            }
+            else
+            {
+                cart = JsonConvert.DeserializeObject<HashSet<CartRequest>>(cartJson);
+            }
+            var existingProduct = cart.FirstOrDefault(c => c.ProductId == id);
+            if (existingProduct != null)
+            {
+                existingProduct.Quantity += 1;
+                existingProduct.TotoalPrice = existingProduct.Price * existingProduct.Quantity;
+            }
+            else
+            {
+                CartRequest orderDetail = new CartRequest
+                {
+                    ProductId = id,
+                    Image = product.Image,
+                    Category = product.ProductCategory.ProductCategoryName,
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    Quantity = 1,
+                    TotoalPrice = product.Price * 1
+                };
+                cart.Add(orderDetail);
+            }
+            cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Session.SetString("Cart", cartJson);
+            return RedirectToAction("Cart", "Order");
+        }
+
+        [HttpGet("Decrease/{id}")]
+        public async Task<IActionResult> DecreaseItem(int id)
+        {
+            var product = await _productService.GetDetailProductAsync(id);
+            var cartJson = HttpContext.Session.GetString("Cart");
+            HashSet<CartRequest> cart;
+            if (string.IsNullOrEmpty(cartJson))
+            {
+                cart = new HashSet<CartRequest>();
+            }
+            else
+            {
+                cart = JsonConvert.DeserializeObject<HashSet<CartRequest>>(cartJson);
+            }
+            var existingProduct = cart.FirstOrDefault(c => c.ProductId == id);
+            if (existingProduct != null)
+            {
+                existingProduct.Quantity -= 1;
+                existingProduct.TotoalPrice = existingProduct.Price * existingProduct.Quantity;
+            }
+            if (existingProduct.Quantity <= 0) {
+                cart.Remove(existingProduct);
+            }
+            cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Session.SetString("Cart", cartJson);
+            return RedirectToAction("Cart", "Order");
+        }
+
+        [HttpGet("getByUserId")]
+        public async Task<IActionResult> OrdersByUserId([FromQuery]int userId)
+        {
+            var orders = await _orderService.GetOrdersByUserId(userId);
+
+            return View("History", orders);
+        }
+
+        [HttpGet("AddToCart/{id}")]
+        public async Task<IActionResult> AddToCart(int id, int quantity, string page)
+
+        {
+            var product = await _productService.GetDetailProductAsync(id);
+
+            // Retrieve the existing cart from the session
+            var cartJson = HttpContext.Session.GetString("Cart");
+            HashSet<CartRequest> cart;
+
+            if (string.IsNullOrEmpty(cartJson))
+            {
+                // If the cart doesn't exist, create a new one
+                cart = new HashSet<CartRequest>();
+            }
+            else
+            {
+                // Deserialize the existing cart
+                cart = JsonConvert.DeserializeObject<HashSet<CartRequest>>(cartJson);
+            }
+
+            // Check if the product already exists in the cart
+            var existingProduct = cart.FirstOrDefault(c => c.ProductId == id);
+
+            if (existingProduct != null)
+            {
+                // If the product exists, update the quantity
+                existingProduct.Quantity += quantity;
+                existingProduct.TotoalPrice = existingProduct.Price * existingProduct.Quantity;
+            }
+            else
+            {
+                // If the product doesn't exist, add it to the cart
+                CartRequest orderDetail = new CartRequest
+                {
+                    ProductId = id,
+                    Image = product.Image,
+                    Category = product.ProductCategory.ProductCategoryName,
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    Quantity = quantity,
+                    TotoalPrice = product.Price * quantity
+                };
+                cart.Add(orderDetail);
+            }
+
+            cartJson = JsonConvert.SerializeObject(cart);
+
+            HttpContext.Session.SetString("Cart", cartJson);
+            if (page == "Home")
+
+                return RedirectToAction("Index", "Home");
+            else
+            {
+                return RedirectToAction("GetById", "Product", new { id = id });
+            }
+        }
+
+        [HttpGet("BuyNow/{id}")]
+        public async Task<IActionResult>  BuyNow(int id)
+        {
+            var product = await _productService.GetDetailProductAsync(id);
+            var cartJson = HttpContext.Session.GetString("Cart");
+            HashSet<CartRequest> cart;
+            if (string.IsNullOrEmpty(cartJson))
+            {
+                cart = new HashSet<CartRequest>();
+            }
+            else
+            {
+                cart = JsonConvert.DeserializeObject<HashSet<CartRequest>>(cartJson);
+            }
+            var existingProduct = cart.FirstOrDefault(c => c.ProductId == id);
+            if (existingProduct != null)
+            {
+                existingProduct.Quantity += 1;
+                existingProduct.TotoalPrice = existingProduct.Price * existingProduct.Quantity;
+            }
+            else
+            {
+                CartRequest orderDetail = new CartRequest
+                {
+                    ProductId = id,
+                    Image = product.Image,
+                    Category = product.ProductCategory.ProductCategoryName,
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    Quantity = 1,
+                    TotoalPrice = product.Price * 1
+                };
+                cart.Add(orderDetail);
+            }
+            cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Session.SetString("Cart", cartJson);
+            return RedirectToAction("Cart", "Order");
+        }
+
+        [HttpGet("deleteCartItem/{id}")]
+        public IActionResult DeleteCartItem(int id)
+        {
+            var cartJson = HttpContext.Session.GetString("Cart");
+            HashSet<CartRequest> cart = JsonConvert.DeserializeObject<HashSet<CartRequest>>(cartJson);
+            var existingProduct = cart.FirstOrDefault(c => c.ProductId == id);
+            cart.Remove(existingProduct);
+            cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Session.SetString("Cart", cartJson);
+            return RedirectToAction("Cart", "Order");
         }
 
         // GET: Orders
@@ -40,54 +239,28 @@ namespace HealthyMomAndBaby.Controllers
             return View(order);
         }
 
-        // POST: Orders/Create
-        [HttpPost]
-        public async Task<IActionResult> Create(Order order)
+        [HttpPost("AddCode")]
+        public async Task<IActionResult> Create(AddCode addCode)
         {
-            if (ModelState.IsValid)
-            {
-                await _orderService.AddOrderAsync(order);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(order);
+            var voucher = await _voucherService.GetVoucherByCode(addCode.Code);
+            HttpContext.Session.SetString("Discount", voucher?.Discount.ToString() ?? "1");
+            return RedirectToAction("Cart", "Order");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        [HttpPost("CheckOut")]
+        public async Task<IActionResult> Create(CheckoutRequest order)
         {
-            var order = await _orderService.GetDetailOrderByIdAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            return View(order);
-        }
-
-        // POST: Orders/Edit/5
-        [HttpPost]
-        public async Task<IActionResult> Edit(Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                await _orderService.UpdateOrderAsync(order);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(order);
-        }
-
-        // POST: Orders/Delete/5
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            try
-            {
-                await _orderService.DeleteOrderAsync(id);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (InvalidOperationException)
-            {
-                return NotFound();
-            }
+            var cartJson = HttpContext.Session.GetString("Cart");
+            HashSet<CartRequest> cart = JsonConvert.DeserializeObject<HashSet<CartRequest>>(cartJson);
+            order.CartRequests = cart;
+            string accountJson = HttpContext.Session?.GetString("LoggedInAccount");
+            Account loggedInAccount = JsonConvert.DeserializeObject<Account>(accountJson);
+            order.CustomerId = loggedInAccount.Id;
+            await _orderService.AddOrderAsync(order);
+            cart = [];
+            cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Session.SetString("Cart",cartJson);
+            return RedirectToAction("Index", "Home");
         }
     }
 }

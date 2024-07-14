@@ -1,25 +1,40 @@
 ﻿using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.InterFaces.Repository;
+using HealthyMomAndBaby.Models.Request;
+using Microsoft.EntityFrameworkCore;
+
 using static NuGet.Packaging.PackagingConstants;
+
 
 namespace HealthyMomAndBaby.Service.Impl
 {
 	public class AccountServiceImpl : IAccountService
 	{
-		private readonly IRepository<Account> _accountRepository;
+        private readonly IRepository<Account> _accountRepository;
+		private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<Point> _pointRepository;
         private readonly IRepository<Order> _orderRepositry;
 
-        public AccountServiceImpl(IRepository<Account> repository, IRepository<Point> pointRepository, IRepository<Order> orderRepositry)
+        public AccountServiceImpl(IRepository<Account> repository,IRepository<Role> roleRepository, IRepository<Point> pointRepository, IRepository<Order> orderRepositry)
 		{
 			_accountRepository = repository;
             _pointRepository = pointRepository;
             _orderRepositry = orderRepositry;
+            _roleRepository = roleRepository;
         }
 
-		public async Task AddAccountAsync(Account account)
+        public async Task AddAccountAsync(CreateUser account)
 		{
-			await _accountRepository.AddAsync(account);
+            var role = _roleRepository.Get().First(x => x.RoleName == account.RoleName);
+            var newUser = new Account
+            {
+                Email = account.Email,
+                UserName = account.UserName,
+                Password = account.Password,
+                Status = false,
+                Role = role
+            };
+            await _accountRepository.AddAsync(newUser);
 			await _accountRepository.SaveChangesAsync();
 			
 		}
@@ -45,8 +60,7 @@ namespace HealthyMomAndBaby.Service.Impl
         public async Task<Account?> Login(string username, string password)
         {
             // Tìm tài khoản với tên người dùng
-            var accounts = await _accountRepository.GetValuesAsync();
-            var account = accounts?.FirstOrDefault(a => a.UserName == username);
+            var account = _accountRepository.Get().Include(x => x.Role).FirstOrDefault(a => a.UserName == username);
 
             if (account == null)
             {
@@ -69,13 +83,15 @@ namespace HealthyMomAndBaby.Service.Impl
 
         public async Task Register(string username, string password, string email)
         {
+            var role = _roleRepository.Get().First(x => x.Id == 1);
             try
             {
                 var account = new Account
                 {
                     UserName = username,
                     Password = password, // Storing password directly
-                    Email = email
+                    Email = email,
+                    Role = role
                 };
 
                 await _accountRepository.AddAsync(account);
@@ -92,12 +108,12 @@ namespace HealthyMomAndBaby.Service.Impl
             }
         }
 
-        public async Task<List<Account>> ShowListProductAsync()
+        public async Task<List<Account>> GetAllUser()
         {
-            return await _accountRepository.GetValuesAsync();
+            return await _accountRepository.Get().Include(x => x.Role).ToListAsync();
         }
 
-        public async Task UpdateAccountAsync(Account account)
+        public async Task UpdateAccountAsync(UpdateAccount account)
         {
             if (account == null)
             {
@@ -109,57 +125,56 @@ namespace HealthyMomAndBaby.Service.Impl
             {
                 throw new InvalidOperationException($"Account with id {account.Id} not found.");
             }
-
+            var role = _roleRepository.Get().First(x => x.RoleName == account.RoleName);
             existingAccount.UserName = account.UserName;
             existingAccount.Password = account.Password;
             existingAccount.Email = account.Email;
             existingAccount.Status = account.Status;
-            existingAccount.RoleId = account.RoleId;
-            existingAccount.Role = account.Role;
+            existingAccount.Role = role;
 
             _accountRepository.Update(existingAccount);  // Update method is synchronous
             await _accountRepository.SaveChangesAsync();
         }
 
-        public async Task AddPointAsync(int accountId)
-        {
-            var user = await _accountRepository.GetAsync(accountId);
-            if (user == null)
-            {
-                throw new InvalidOperationException($"Account with id {accountId} not found.");
-            }
+        //public async Task AddPointAsync(int accountId)
+        //{
+        //    var user = await _accountRepository.GetAsync(accountId);
+        //    if (user == null)
+        //    {
+        //        throw new InvalidOperationException($"Account with id {accountId} not found.");
+        //    }
 
-            var userOrders = await _orderRepositry.GetListByIdAsync(o => o.UserId == user.Id);
-            if (userOrders == null)
-            {
-                throw new InvalidOperationException($"Account with id {accountId} not have any order.");
-            }
+        //    var userOrders = await _orderRepositry.GetListByIdAsync(o => o.UserId == user.Id);
+        //    if (userOrders == null)
+        //    {
+        //        throw new InvalidOperationException($"Account with id {accountId} not have any order.");
+        //    }
 
-            int totalPoints = 0;
-            foreach (var orders in userOrders)
-            {
-                totalPoints += 1;
-            }
+        //    int totalPoints = 0;
+        //    foreach (var orders in userOrders)
+        //    {
+        //        totalPoints += 1;
+        //    }
 
-            var userPoints = await _pointRepository.GetAsync(user.Id);
-            if (userPoints == null)
-            {
-                userPoints = new Point
-                {
-                    UserId = user.Id,
-                    Points = totalPoints
-                };
-                await _pointRepository.AddAsync(userPoints);
-                await _pointRepository.SaveChangesAsync();
+        //    var userPoints = await _pointRepository.GetAsync(user.Id);
+        //    if (userPoints == null)
+        //    {
+        //        userPoints = new Point
+        //        {
+        //            UserId = user.Id,
+        //            Points = totalPoints
+        //        };
+        //        await _pointRepository.AddAsync(userPoints);
+        //        await _pointRepository.SaveChangesAsync();
 
-            }
-            else
-            {
-                userPoints.Points += totalPoints;
-                _pointRepository.Update(userPoints);
-                await _pointRepository.SaveChangesAsync();
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        userPoints.Points += totalPoints;
+        //        _pointRepository.Update(userPoints);
+        //        await _pointRepository.SaveChangesAsync();
+        //    }
+        //}
 
         public async Task<List<Point>> ShowListPointAsync()
         {

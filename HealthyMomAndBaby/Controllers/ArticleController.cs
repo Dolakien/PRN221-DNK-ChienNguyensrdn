@@ -1,4 +1,5 @@
 ﻿using HealthyMomAndBaby.Entity;
+using HealthyMomAndBaby.Models.Request;
 using HealthyMomAndBaby.Service;
 using HealthyMomAndBaby.Service.Impl;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyMomAndBaby.Controllers
 {
+    [Route("Article")]
     public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
@@ -36,15 +38,18 @@ namespace HealthyMomAndBaby.Controllers
         }
 
         // POST: Article/Create
-        [HttpPost]
-        public async Task<IActionResult> Create(Article article)
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(ArticleRequest article)
         {
-            if (ModelState.IsValid)
+            try
             {
                 await _articleService.AddArticleAsync(article);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Articles", "Admin"); ;
             }
-            return View(article);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         // GET: Article/Edit/5
@@ -59,30 +64,33 @@ namespace HealthyMomAndBaby.Controllers
             return View(article);
         }
 
-        // POST: Article/Edit/5
-        [HttpPost]
-        public async Task<IActionResult> Edit(Article article)
+        [HttpPost("update")]
+        public async Task<IActionResult> Edit(UpdateArticle article)
         {
-            if (ModelState.IsValid)
+            try
             {
                 await _articleService.UpdateArticleAsync(article);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Articles", "Admin");
             }
-            return View(article);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
-        // POST: Article/Delete/5
-        [HttpPost, ActionName("Delete")]
+
+        // Delete: Article/Delete/5
+        [HttpGet("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 await _articleService.DeleteArticleAsync(id);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Articles", "Admin");
             }
-            catch (InvalidOperationException)
+            catch (Exception ex)
             {
-                return NotFound();
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }

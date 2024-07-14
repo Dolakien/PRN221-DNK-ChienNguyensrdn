@@ -1,4 +1,7 @@
-﻿namespace HealthyMomAndBaby.Entity
+﻿
+using Newtonsoft.Json;
+
+namespace HealthyMomAndBaby.Entity
 {
     public class Account : IEntity
     {
@@ -8,6 +11,7 @@
         public string Email { get; set; }
         public bool Status { get; set; }
         public int RoleId { get; set; }
+        [JsonIgnore]
         public Role Role { get; set; }
     }
 }

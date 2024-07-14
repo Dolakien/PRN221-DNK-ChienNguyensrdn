@@ -40,16 +40,6 @@ namespace HealthyMomAndBaby.DataContext
                 .WithMany()
                 .HasForeignKey(a => a.AuthorId);
 
-            modelBuilder.Entity<Order>()
-                .HasOne(o => o.User)
-                .WithMany()
-                .HasForeignKey(o => o.UserId);
-
-            modelBuilder.Entity<OrderDetail>()
-                .HasOne(od => od.Product)
-                .WithMany()
-                .HasForeignKey(od => od.ProductId);
-
             modelBuilder.Entity<OrderDetail>()
                 .HasOne(od => od.Order)
                 .WithMany(o => o.OrderDetails)
@@ -74,11 +64,6 @@ namespace HealthyMomAndBaby.DataContext
                 .HasOne(v => v.CreatedBy)
                 .WithMany()
                 .HasForeignKey(v => v.CreateBy);
-
-            modelBuilder.Entity<Product>()
-                .HasOne(p => p.ProductCategory)
-                .WithMany(pc => pc.Products)
-                .HasForeignKey(p => p.ProductCategoryId);
         }
     }
 }

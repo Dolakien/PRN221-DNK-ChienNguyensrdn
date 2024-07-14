@@ -1,4 +1,4 @@
-using HealthyMomAndBaby.DataContext;
+﻿using HealthyMomAndBaby.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -45,8 +45,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
+// Kích hoạt việc sử dụng Session
 
 app.UseAuthorization();
 

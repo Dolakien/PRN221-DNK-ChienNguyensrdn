@@ -1,0 +1,361 @@
+﻿@{
+    ViewData["Title"] = "Voucher";
+    @using HealthyMomAndBaby
+    @using HealthyMomAndBaby.Models
+    @using HealthyMomAndBaby.Entity
+    @using Newtonsoft.Json;
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+}
+@model IEnumerable<Voucher>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Products</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      integrity="sha512-LlfymZV3HX1knxgWwpx0If2P7e2ve3kUN8JS7ohKoAoyN0J4UZm1alALOO5F2sT6A6/WLOa/ItlU9NCwAlC0Fw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <style>
+
+    .btnha:active {
+    background-color: #eaf2fd !important; /* Light blue color */
+    color: #2f80ed !important;
+}
+
+.btnha:hover {
+    background-color: #eaf2fd !important; /* Light blue color */
+    color: #2f80ed;
+}
+
+.btnha {
+    color: #8e8e93;
+    font-weight: bold;
+}
+
+.edit {
+    cursor: pointer !important;
+    color: #2f80ed;
+}
+
+.delete {
+    cursor: pointer;
+    color: red;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #2f80ed;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #2f80ed;
+}
+</style>
+@{
+       var username = Context.Session.GetString("LoggedInAccount");
+       Account user = null;
+            if (username != null)
+            {
+                user = JsonConvert.DeserializeObject<Account>(username);
+            }
+}
+
+  <body style="background-color: #f7f7f7; width: 100vw">
+    <div
+      style="height: 64px; background-color: white"
+      class="d-flex align-items-center"
+    >
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuNlrvrFMLORKsLtoNNG6J0ulGeOgOBuzcNw&s"
+        alt=""
+        width="40"
+        height="40"
+        class="rounded-circle mx-4"
+      />
+      <h3> Welcome @user?.UserName</h3>
+      <a href="@Url.Action("logout", "Account")" class="btn btn-danger ms-auto" style="margin-right: 20px">
+        Logout
+      </a>
+    </div>
+    <div class="text-center" style="width: 99vw">
+      <div class="row">
+        <div class="col-2 d-flex justify-content-center">
+          <div
+            class="rounded"
+            style="
+              width: 256px;
+              height: 472px;
+              background-color: white;
+              margin-top: 15px;
+              margin-left: 10px;
+            "
+          >
+            <button
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 10px; border: none"
+            >
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-house" style="margin-right: 20px"></i>
+                <span>Dashboard</span>
+              </div>
+            </button>
+            <a
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Dashboard", "Admin")"
+            >
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-user" style="margin-right: 23px"></i>
+                <span>User</span>
+              </div>
+            </a>
+            <a
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Products", "Admin")"
+            >
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-briefcase" style="margin-right: 20px"></i>
+                <span>Product</span>
+              </div>
+            </a>
+            <a
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Categories", "Admin")"
+            >
+              <div class="d-flex align-items-center">
+                <i
+                  class="fa-solid fa-layer-group"
+                  style="margin-right: 18px"
+                ></i>
+                <span>Category</span>
+              </div>
+            </a>
+            <a
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Orders", "Admin")"
+            >
+              <div class="d-flex align-items-center">
+                <i
+                  class="fa-solid fa-file-invoice"
+                  style="margin-right: 23px"
+                ></i>
+                <span>Order</span>
+              </div>
+            </a>
+             <a
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Articles", "Admin")"
+            >
+              <div class="d-flex align-items-center">
+                <i
+                  class="fa-solid fa-file-invoice"
+                  style="margin-right: 23px"
+                ></i>
+                <span>Article</span>
+              </div>
+            </a>
+             <a
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Vouchers", "Admin")"
+            >
+              <div class="d-flex align-items-center">
+                <i
+                  class="fa-solid fa-file-invoice"
+                  style="margin-right: 23px"
+                ></i>
+                <span>Voucher</span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <!-- ========== col2 ========== -->
+                <div class="col-8">
+          <div
+            class="rounded"
+            style="
+              background-color: white;
+              max-height: 800px;
+              height: 800px;
+              margin-top: 15px;
+              overflow: auto;
+            "
+          >
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Voucher Name</th>
+                  <th scope="col">Voucher Code</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">Expiry Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                 @foreach (var voucher in Model)
+                 {
+                <tr>
+                  <td scope="row">@voucher.Id</td>
+                  <td>@voucher.VoucherName</td>
+                  <td>@voucher.VoucherCode</td>
+                  <td>@voucher.Discount</td>
+                  <td>@voucher.ExpiryDate</td>
+                  <td>@voucher.IsDeleted          
+                  </td>
+                  <td>
+                    <a href="@Url.Action("delete","Voucher", new {id = voucher.Id})"><i class="fa-solid fa-trash delete"></i></a>
+                </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- ========== col3 ========== -->
+        <div class="col-2 d-flex justify-content-center">
+          <div
+            class="rounded"
+            style="
+              width: 256px;
+              height: 472px;
+              background-color: white;
+              margin-top: 15px;
+              margin-left: 10px;
+            "
+          >
+            <button
+              style="margin-top: 20px; cursor: pointer !important"
+              type="button"
+              class="btn btn-success"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              <div class="d-flex align-items-center">
+                <i class="fa-solid fa-plus" style="margin-right: 20px"></i>
+                <span>Add New Voucher</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <!-- ========== modal ========== -->
+   <form asp-controller="Voucher" asp-action="add" method="post">
+    <div
+    class="modal fade"
+    id="exampleModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">
+            Create Product
+          </h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="VoucherName"
+              name="VoucherName"
+              required
+            />
+            <label style="font-weight: bold" for="userName"
+              >Voucher Name <span style="color: red">*</span></label
+            >
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="VoucherCode"
+              name="VoucherCode"
+              required
+            />
+            <label style="font-weight: bold" for="userName"
+              >Voucher Code <span style="color: red">*</span></label
+            >
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="Discount"
+              name="Discount"
+              required
+            />
+            <label style="font-weight: bold" for="userName"
+              >Discount <span style="color: red">*</span></label
+            >
+          </div>
+          <div class="d-flex justify-content-end gap-4">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+          </div>
+          
+        </div>
+       
+      </div>
+    </div>
+  </form>
+ <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+</html>
+

@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <Folder Include="Models\Response\" />
+    <Folder Include="Views\Shared\" />
   </ItemGroup>
 
 </Project>

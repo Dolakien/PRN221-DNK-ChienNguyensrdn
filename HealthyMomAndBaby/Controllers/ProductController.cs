@@ -1,9 +1,11 @@
 ﻿using HealthyMomAndBaby.Entity;
+using HealthyMomAndBaby.Models.Request;
 using HealthyMomAndBaby.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyMomAndBaby.Controllers
 {
+    [Route("Product")]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
@@ -12,14 +14,8 @@ namespace HealthyMomAndBaby.Controllers
         {
             _productService = productService;
         }
-        // GET: Product/Index
-        public async Task<IActionResult> Index()
-        {
-            var products = await _productService.ShowListProductAsync();
-            return View(products);
-        }
 
-        // GET: Product/Details/5
+        [HttpGet("getById/{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var product = await _productService.GetDetailProductAsync(id);
@@ -27,60 +23,49 @@ namespace HealthyMomAndBaby.Controllers
             {
                 return NotFound();
             }
-            return View(product);
-        }
-
-        // GET: Product/Add
-        [HttpGet]
-        public IActionResult Add()
-        {
-            return View();
+            return View("Product",product);
         }
 
         // POST: Product/Add
-        [HttpPost]
-        public async Task<IActionResult> Add(Product product)
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(CreateProduct product)
         {
-            if (ModelState.IsValid)
+
+            try
             {
                 await _productService.AddProductAsync(product);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Products", "Admin"); ;
             }
-            return View(product);
-        }
-
-        // GET: Product/Edit/5
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            var product = await _productService.GetDetailProductAsync(id);
-            if (product == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return StatusCode(500, new { message = ex.Message });
             }
-            return View(product);
+           
         }
 
         // POST: Product/Edit/5
-        [HttpPost]
-        public async Task<IActionResult> Edit(Product product)
+        [HttpPost("update")]
+        public async Task<IActionResult> Edit(UpdateProduct product)
         {
-            if (ModelState.IsValid)
+            try
             {
                 await _productService.UpdateProductAsync(product);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Products", "Admin"); ;
             }
-            return View(product);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         // POST: Product/Delete/5
-        [HttpPost]
+        [HttpGet("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 await _productService.DeleteProductAsync(id);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Products", "Admin"); ;
             }
             catch (InvalidOperationException)
             {
