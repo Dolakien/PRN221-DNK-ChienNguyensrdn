@@ -3,19 +3,27 @@ using HealthyMomAndBaby.InterFaces.Repository;
 using HealthyMomAndBaby.Models.Request;
 using Microsoft.EntityFrameworkCore;
 
+using static NuGet.Packaging.PackagingConstants;
+
+
 namespace HealthyMomAndBaby.Service.Impl
 {
 	public class AccountServiceImpl : IAccountService
 	{
-        private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<Account> _accountRepository;
-		public AccountServiceImpl(IRepository<Account> repository, IRepository<Role> roleRepository)
+		private readonly IRepository<Role> _roleRepository;
+        private readonly IRepository<Point> _pointRepository;
+        private readonly IRepository<Order> _orderRepositry;
+
+        public AccountServiceImpl(IRepository<Account> repository,IRepository<Role> roleRepository, IRepository<Point> pointRepository, IRepository<Order> orderRepositry)
 		{
 			_accountRepository = repository;
+            _pointRepository = pointRepository;
+            _orderRepositry = orderRepositry;
             _roleRepository = roleRepository;
-		}
+        }
 
-		public async Task AddAccountAsync(CreateUser account)
+        public async Task AddAccountAsync(CreateUser account)
 		{
             var role = _roleRepository.Get().First(x => x.RoleName == account.RoleName);
             var newUser = new Account
@@ -31,7 +39,7 @@ namespace HealthyMomAndBaby.Service.Impl
 			
 		}
 
-		public async Task DeleteAccountAsync(int id)
+        public async Task DeleteAccountAsync(int id)
 		{
             var account = await _accountRepository.GetAsync(id);
             if (account == null)
@@ -126,6 +134,88 @@ namespace HealthyMomAndBaby.Service.Impl
 
             _accountRepository.Update(existingAccount);  // Update method is synchronous
             await _accountRepository.SaveChangesAsync();
+        }
+
+        //public async Task AddPointAsync(int accountId)
+        //{
+        //    var user = await _accountRepository.GetAsync(accountId);
+        //    if (user == null)
+        //    {
+        //        throw new InvalidOperationException($"Account with id {accountId} not found.");
+        //    }
+
+        //    var userOrders = await _orderRepositry.GetListByIdAsync(o => o.UserId == user.Id);
+        //    if (userOrders == null)
+        //    {
+        //        throw new InvalidOperationException($"Account with id {accountId} not have any order.");
+        //    }
+
+        //    int totalPoints = 0;
+        //    foreach (var orders in userOrders)
+        //    {
+        //        totalPoints += 1;
+        //    }
+
+        //    var userPoints = await _pointRepository.GetAsync(user.Id);
+        //    if (userPoints == null)
+        //    {
+        //        userPoints = new Point
+        //        {
+        //            UserId = user.Id,
+        //            Points = totalPoints
+        //        };
+        //        await _pointRepository.AddAsync(userPoints);
+        //        await _pointRepository.SaveChangesAsync();
+
+        //    }
+        //    else
+        //    {
+        //        userPoints.Points += totalPoints;
+        //        _pointRepository.Update(userPoints);
+        //        await _pointRepository.SaveChangesAsync();
+        //    }
+        //}
+
+        public async Task<List<Point>> ShowListPointAsync()
+        {
+            return await _pointRepository.GetValuesAsync();
+        }
+
+        public async Task<Point?> GetDetailPointAsync(int id)
+        {
+            return await _pointRepository.GetAsync(id);
+        }
+
+        public async Task UpdatePointAsync(Point point)
+        {
+            if (point == null)
+            {
+                throw new ArgumentNullException(nameof(point));
+            }
+
+            var existingPoint = await _pointRepository.GetAsync(point.Id);
+            if (existingPoint == null)
+            {
+                throw new InvalidOperationException($"Point with id {point.Id} not found.");
+            }
+
+            existingPoint.UserId = point.UserId;
+            existingPoint.Points = point.Points;
+
+            _pointRepository.Update(existingPoint);  // Update method is synchronous
+            await _pointRepository.SaveChangesAsync();
+        }
+
+        public async Task DeletePointAsync(int id)
+        {
+            var point = await _pointRepository.GetAsync(id);
+            if (point == null)
+            {
+                throw new InvalidOperationException($"Point with id {id} not found.");
+            }
+
+            _pointRepository.Delete(point);
+            await _pointRepository.SaveChangesAsync();
         }
     }
 }

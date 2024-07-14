@@ -78,6 +78,7 @@ namespace HealthyMomAndBaby.Controllers
             }
         }
 
+
         // Delete: Article/Delete/5
         [HttpGet("Delete")]
         public async Task<IActionResult> Delete(int id)

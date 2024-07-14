@@ -114,6 +114,7 @@ namespace HealthyMomAndBaby.Controllers
 
         [HttpGet("AddToCart/{id}")]
         public async Task<IActionResult> AddToCart(int id, int quantity, string page)
+
         {
             var product = await _productService.GetDetailProductAsync(id);
 
