@@ -12,11 +12,5 @@ namespace HealthyMomAndBaby.Service
         Task  Register(string username, string password, string email);
         Task<List<Account>> GetAllUser();
         Task<Account?> GetDetailProductAsync(int id);
-        Task<List<Point>> ShowListPointAsync();
-        Task<Point?> GetDetailPointAsync(int id);
-        //Task AddPointAsync(int accountId);
-        Task UpdatePointAsync(Point point);
-        Task DeletePointAsync(int id);
-
     }
 }

@@ -1,12 +1,12 @@
 ﻿@{
-    ViewData["Title"] = "Product";
+    ViewData["Title"] = "Article";
     @using HealthyMomAndBaby
     @using HealthyMomAndBaby.Models
     @using HealthyMomAndBaby.Entity
-@using Newtonsoft.Json
+    @using Newtonsoft.Json
     @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 }
-@model Product
+@model IEnumerable<Article>
 
 <!DOCTYPE html>
 <bo lang="en">
@@ -27,111 +27,97 @@
       crossorigin="anonymous"
     />
   </head>
-
   @{
-    string accountJson = Context.Session?.GetString("LoggedInAccount");
-    Account loggedInAccount = null;
-          if (accountJson != null)
-          {
-             loggedInAccount = JsonConvert.DeserializeObject<Account>(accountJson);
+      string accountJson = Context.Session?.GetString("LoggedInAccount");
+      Account loggedInAccount = null;
+            if (accountJson != null)
+            {
+               loggedInAccount = JsonConvert.DeserializeObject<Account>(accountJson);
 
-              // Bây giờ bạn có thể sử dụng đối tượng loggedInAccount trong action này
-          }
-}
+                // Bây giờ bạn có thể sử dụng đối tượng loggedInAccount trong action này
+            }
+  }
 
-<body style="background-color: #f7f7f7; width: 100vw; overflow-x: hidden;">
-      <div style="height: 64px; background-color: white">
+  <body style="background-color: #f7f7f7; width: 100vw; overflow-x: hidden;">
+        <div style="height: 64px; background-color: white">
 
-          <div class="">
-              <div class="row">
-                  <div class="col-1">
-                  </div>
-                  <div class="col-1">
-                  </div>
-                  <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
-                      <a href="@Url.Action("Index", "Home")" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
-                          Home
-                      </a>
+            <div class="">
+                <div class="row">
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
+                        <a href="@Url.Action("Index", "Home")" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                            Home
+                        </a>
 
-                  </div>
-                  <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
-                      @if (loggedInAccount != null)
-                      {
-                          <a href="@Url.Action("getByUserId","Order", new {userId = loggedInAccount.Id})" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
-                              History
-                          </a>
-                      }
-                  </div>
-                  <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
-                      <a href="@Url.Action("blog", "Article")" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
-                          Blog
-                      </a>
-                  </div>
-                  
-                  <div class="col-1">
-                  </div>
-                  <div class="col-1">
-                  </div>
-                  <div class="col-1">
-                  </div>
-                  <div class="col-4 d-flex justify-content-end align-items-center " style="height: 64px;">
-                     
-                      @if (loggedInAccount != null)
-                      {
-                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuNlrvrFMLORKsLtoNNG6J0ulGeOgOBuzcNw&s"
-                               alt=""
-                               width="40"
-                               height="40"
-                               class="rounded-circle mx-4" />
-                          <h3 class="mx-4">Trần Thanh Sơn</h3>
-                          <div>
-                              <a href="@Url.Action("Cart", "Order")"><i class="fa-solid fa-cart-shopping" style="font-size: 30px;"></i></a>
-                          </div>
-                          <a href="@Url.Action("logout", "Account")" class="btn btn-danger" style="margin-left: 20px; margin-right: 20px;">
-                              Logout
-                          </a>
-                      }
-                      else
-                      {
-                          <a class="btn btn-success" style="margin-left: 20px; margin-right: 20px;" href="@Url.Action("", "Account")">
-                              Login
-                          </a>
-                          <a class="btn btn-primary" style="margin-left: 20px; margin-right: 20px;" href="@Url.Action("Signup", "Account")">
-                              SignUp
-                          </a>
-                      }
-                     
-                  </div>
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
+                        @if (loggedInAccount != null)
+                        {
+                            <a href="@Url.Action("getByUserId","Order", new {userId = loggedInAccount.Id})" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                                History
+                            </a>
+                        }
+                    </div>
+                    <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
+                        <a href="@Url.Action("blog", "Article")" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                            Blog
+                        </a>
+                    </div>
+                    
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-4 d-flex justify-content-end align-items-center " style="height: 64px;">
+                       
+                        @if (loggedInAccount != null)
+                        {
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuNlrvrFMLORKsLtoNNG6J0ulGeOgOBuzcNw&s"
+                                 alt=""
+                                 width="40"
+                                 height="40"
+                                 class="rounded-circle mx-4" />
+                            <h3 class="mx-4">Trần Thanh Sơn</h3>
+                            <div>
+                                <a href="@Url.Action("Cart", "Order")"><i class="fa-solid fa-cart-shopping" style="font-size: 30px;"></i></a>
+                            </div>
+                            <a href="@Url.Action("logout", "Account")" class="btn btn-danger" style="margin-left: 20px; margin-right: 20px;">
+                                Logout
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success" style="margin-left: 20px; margin-right: 20px;" href="@Url.Action("", "Account")">
+                                Login
+                            </a>
+                            <a class="btn btn-primary" style="margin-left: 20px; margin-right: 20px;" href="@Url.Action("Signup", "Account")">
+                                SignUp
+                            </a>
+                        }
+                       
+                    </div>
 
-              </div>
-          </div>
-      </div>
-      </div>
+                </div>
+            </div>
+        </div>
+        </div>
 <!-- hình động-->
-
+@foreach( var verticle in Model){
 <div class="container rounded" style="height: 68vh; background-color: white; margin-top: 20px;">
-    <h1>@Model.ProductName</h1>
+    <h1>@verticle.Title</h1>
     <hr>
     <div class="">
-        <div class="row">
-          <div class="col-5">
-            <img src="@Model.Image" alt="" width="400" height="500">
-          </div>
-          <div class="col">
-            
-            <h3 style="color: red;">@Model.Price đ</h3>
-            <div>
-                <a href="@Url.Action("AddToCart","Order", new {id = @Model.Id, quantity = 1, Page = ""})" class="btn btn-success">Add to cart</a>
-                <a href="@Url.Action("BuyNow","Order", new {id = @Model.Id})" class="btn btn-danger">Buy now</a>
-            </div>
-            <div>@Model.Description</div>
-          </div>
-        </div>
+        @verticle.Content
       </div>
 </div>
-
+}
   <!-- Footer-->
-  <footer class="footer color-55 bg-white" style="margin-top:20px;">
+   <footer class="footer color-55 bg-white" style="margin-top:20px;">
 
  		<div class="container d-flex justify-content-between align-center font-13 font-medium" style="padding-top:20px; line-height:18px;   position: relative;">		 	
 		

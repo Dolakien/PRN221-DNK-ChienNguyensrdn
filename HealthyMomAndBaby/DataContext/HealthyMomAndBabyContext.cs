@@ -13,7 +13,6 @@ namespace HealthyMomAndBaby.DataContext
         public DbSet<Article> Articles { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<Point> Points { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -54,11 +53,6 @@ namespace HealthyMomAndBaby.DataContext
                 .HasOne(r => r.Product)
                 .WithMany()
                 .HasForeignKey(r => r.ProductId);
-
-            modelBuilder.Entity<Point>()
-                .HasOne(p => p.User)
-                .WithMany()
-                .HasForeignKey(p => p.UserId);
 
             modelBuilder.Entity<Voucher>()
                 .HasOne(v => v.CreatedBy)
