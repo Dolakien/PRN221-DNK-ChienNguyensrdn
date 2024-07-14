@@ -134,12 +134,12 @@ namespace HealthyMomAndBaby.Controllers
         }
 
 
-        [HttpPost("point/{id}")]
-        public async Task<IActionResult> AddPoint(int id)
-        {
-            await _accountService.AddPointAsync(id);
-            return View(id);
-        }
+    //    [HttpPost("point/{id}")]
+    //    public async Task<IActionResult> AddPoint(int id)
+    //    {
+     //       await _accountService.AddPointAsync(id);
+     //       return View(id);
+     //   }
 
 
         [HttpGet("point/details/{id}")]

@@ -38,6 +38,9 @@ namespace HealthyMomAndBaby.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Point")
+                        .HasColumnType("int");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
@@ -121,6 +124,9 @@ namespace HealthyMomAndBaby.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<double>("Voucher")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
