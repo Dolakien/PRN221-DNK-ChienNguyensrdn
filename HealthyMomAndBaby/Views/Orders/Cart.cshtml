@@ -4,7 +4,10 @@
     @using HealthyMomAndBaby.Models
     @using HealthyMomAndBaby.Entity
     @using HealthyMomAndBaby.Models.Request
-    var carts = ViewData["Cart"] as HashSet<CartRequest>;
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+    var carts = ViewData["Cart"] as HashSet<CartRequest> ?? [];
+   var sum = 0.0;
+   var discount = Context.Session.GetString("Discount");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -49,12 +52,16 @@
                         <h2>Cart</h2>
                     </div>
                     <hr />
+                   
                     <!-- Cart body -->
                     <div class="text-center"
                          style="padding-left: 80px; padding-right: 80px">
-                        <div class="row">
-                            @foreach( CartRequest cart in carts)
+                          @foreach( CartRequest cart in carts)
                             {
+                                sum = sum + cart.TotoalPrice;
+                            <div class="row">
+                           
+                          
                                 <!-- Cart c1 -->
                                 <div class="col-2">
                                     <img src="@cart.Image"
@@ -69,21 +76,22 @@
                                         <h3>@cart.ProductName</h3>
                                     </div>
                                 </div>
+                                
                                 <div class="col d-flex justify-content-center align-items-center">
-                                    <h2>@cart.TotoalPrice</h2>
+                                    <h2>@cart.TotoalPrice VNĐ</h2>
                                 </div>
                                 <!-- Cart c3 -->
                                 <div class="col d-flex align-items-center">
                                     <div class="text-center">
-                                        <button class="btn btn-outline-primary"
+                                        <a href="@Url.Action("Increase","Order", new {id = cart.ProductId})" class="btn btn-outline-primary"
                                                 style="border: none">
                                             +
-                                        </button>
-                                        <input type="number" value="@cart.Quantity" style="width: 40px; height: 40px" />
-                                        <button class="btn btn-outline-primary"
+                                        </a>
+                                        <h3>@cart.Quantity</h3>
+                                        <a href="@Url.Action("Decrease","Order", new {id = cart.ProductId})" class="btn btn-outline-primary"
                                                 style="border: none">
                                             -
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                                 <!-- Cart c4 -->
@@ -92,10 +100,11 @@
                                         <i class="fa-solid fa-trash delete"></i>
                                     </a>
                                 </div>
-                            }
+    
                             
                         </div>
                         <hr />
+                                                }
                     </div>
                 </div>
             </div>
@@ -109,24 +118,105 @@
                     <div style="padding-top: 20px; padding-left: 50px; padding-right: 50px">
                         <div class="d-flex justify-content-between">
                             <div style="font-weight: bold; font-size: large">
-                                Total Price
+                                Amount
                             </div>
-                            <div>$53.98</div>
+                            <div>@sum VND</div>
                         </div>
                         <div class="d-flex justify-content-between">
                             <div style="font-weight: bold; font-size: large">Shipping</div>
                             <div>Ship code</div>
+                            </div>
+                            <hr />
+                            @{
+                                if(discount != null){
+                                     sum= sum * (1.0-Double.Parse(discount));
+                                }
+                               }
+                        <div class="d-flex justify-content-between">
+                            <div style="font-weight: bold; font-size: large">
+                                Total Price
+                            </div>
+                            <div>@sum VND</div>
                         </div>
-                        <hr />
-                        <button class="btn btn-primary" style="width: 18.5vw">
+                        
+                        @if(sum != 0){
+                            <div class="d-flex justify-content-between" style="margin-bottom: 5px">
+                            <form asp-controller="Order" asp-action="AddCode" method="post">
+                            <input style="font-weight: bold; font-size: large;" name="code"/>
+                            <button type="submit" class="btn btn-success">Add</button>
+                            </form>
+                            </div>
+                            <button class="btn btn-primary" type="button" style="width: 18.5vw" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
                             <div style="font-weight: bold; font-size: large">Check out</div>
                         </button>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+<!-- Modal-->
+<form asp-controller="Order" asp-action="CheckOut" method="post">
+    <div class="modal fade"
+         id="exampleModal"
+         tabindex="-1"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                        Check out
+                    </h1>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input type="text"
+                               class="form-control"
+                               id="FullName"
+                               name="FullName"
+                               required />
+                        <label style="font-weight: bold" >Name<span style="color: red">*</span></label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text"
+                               class="form-control"
+                               id="ShippAddres"
+                               name="ShippAddres"
+                               required />
+                        <label style="font-weight: bold" >Ship Address<span style="color: red">*</span></label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text"
+                               class="form-control"
+                               id="PhoneNumber"
+                               name="PhoneNumber"
+                               required />
+                        <label style="font-weight: bold" >Phone Number<span style="color: red">*</span></label>
+                    </div>
+                    <input type="hidden"
+                           class="form-control"
+                           id="TotalPrice"
+                           value="@sum"
+                           name="TotalPrice"
+                           required />
+                    <div class="d-flex justify-content-end gap-4">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">CheckOut</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

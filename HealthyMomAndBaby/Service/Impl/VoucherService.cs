@@ -1,23 +1,37 @@
 ﻿using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.InterFaces.Repository;
+using HealthyMomAndBaby.Models.Request;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthyMomAndBaby.Service.Impl
 {
-    public class VoucherRepository : IVoucherService
+    public class VoucherService : IVoucherService
     {
         private readonly IRepository<Voucher> _voucherRepository;
-        public VoucherRepository(IRepository<Product> voucherRepository)
+        private readonly IRepository<Account> _accountRepository;
+        public VoucherService(IRepository<Voucher> voucherRepository, IRepository<Account> accountRepository)
         {
-            _voucherRepository = _voucherRepository;
+            _voucherRepository = voucherRepository;
+            _accountRepository = accountRepository;
         }
-        public async Task AddVoucherAsync(Voucher voucher)
+        public async Task AddVoucherAsync(CreateVoucherRequest voucher)
         {
             if (voucher == null)
             {
                 throw new ArgumentNullException(nameof(voucher));
             }
+			var account = await _accountRepository.Get().Where(x => x.UserName == "admin").FirstAsync();
+			var newVoucher = new Voucher
+            {
+                Discount = Double.Parse(voucher.Discount),
+                VoucherName = voucher.VoucherName,
+                VoucherCode = voucher.VoucherCode,
+                ExpiryDate = DateTime.Now.AddDays(10),
+                IsDeleted = false,
+                CreatedBy = account
+            };
 
-            await _voucherRepository.AddAsync(voucher);
+            await _voucherRepository.AddAsync(newVoucher);
             await _voucherRepository.SaveChangesAsync();
         }
 
@@ -36,7 +50,7 @@ namespace HealthyMomAndBaby.Service.Impl
 
         public async Task<List<Voucher>> GetAllVouchersAsync()
         {
-            return await _voucherRepository.GetValuesAsync();
+            return await _voucherRepository.Get().ToListAsync();
         }
 
         public async Task<Voucher?> GetVoucherAsync(int id)
@@ -44,7 +58,12 @@ namespace HealthyMomAndBaby.Service.Impl
             return await _voucherRepository.GetAsync(id);
         }
 
-        public async Task UpdateVoucherAsync(Voucher voucher)
+		public async Task<Voucher?> GetVoucherByCode(string code)
+		{
+			return await _voucherRepository.Get().Where(x=> x.VoucherCode == code).FirstAsync();
+		}
+
+		public async Task UpdateVoucherAsync(Voucher voucher)
         {
             if (voucher == null)
             {

@@ -4,6 +4,7 @@ using HealthyMomAndBaby.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthyMomAndBaby.Migrations
 {
     [DbContext(typeof(HealthyMomAndBabyContext))]
-    partial class HealthyMomAndBabyContextModelSnapshot : ModelSnapshot
+    [Migration("20240707115945_updateEntityOrder")]
+    partial class updateEntityOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,8 +157,9 @@ namespace HealthyMomAndBaby.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<double>("SubPrice")
-                        .HasColumnType("float");
+                    b.Property<string>("SubPrice")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("UnitPrice")
                         .HasColumnType("float");

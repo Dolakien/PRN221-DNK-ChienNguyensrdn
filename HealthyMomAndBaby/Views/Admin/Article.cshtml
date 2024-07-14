@@ -1,13 +1,12 @@
 ﻿@{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Categories";
     @using HealthyMomAndBaby
     @using HealthyMomAndBaby.Models
     @using HealthyMomAndBaby.Entity
     @using Newtonsoft.Json;
     @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-    var listCategory = ViewData["Categories"] as List<ProductCategory>;
 }
-@model IEnumerable<Product>
+@model IEnumerable<Article>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -225,48 +224,34 @@
               <thead>
                 <tr>
                   <th scope="col">Id</th>
-                  <th scope="col">ProductName</th>
-                  <th scope="col">Image</th>
-                  <th style="width: 320px" scope="col">Description</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">Category</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Content</th>
+                  <th scope="col">Date</th>
                   <th scope="col">IsDeleted</th>
-                  <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
-                 @foreach (var product in Model)
+                 @foreach (var article in Model)
                  {
-                     <form asp-controller="Product" asp-action="update" method="post">
+                     <form asp-controller="Article" asp-action="update" method="post">
                 <tr>
-                    @{
-                     var isdelete = !product.IsDeleted;
-                     var fillter = listCategory?.Where(x => x.ProductCategoryName != product.ProductCategory.ProductCategoryName);
-                    }
-                  <td scope="row">@product.Id</td>
-                  <input class="form-control" type="hidden" name="id" value="@product.Id" />
-                  <td><input class="form-control" type="text" name="productName" value="@product.ProductName" /></td>
-                  <td><input class="form-control" type="text" name="image" value="@product.Image" /></td>
+                    @{var value = !article.IsDeleted;}
+                  <td scope="row">@article.Id</td>
+                  <input class="form-control" type="hidden" value="@article.Id" name="id" />
+                  <td><input class="form-control" type="text" value="@article.Title" name="title" /></td>
                   <td>
-                  <textarea class="form-control" type="text" name="description" >@product.Description</textarea>
+                  <textarea class="form-control" type="text" name="content" >@article.Content</textarea>
                   </td>
-                  <td><input class="form-control" type="text" name="price" value="@product.Price" /></td>
-                  <td><input class="form-control" type="number" name="quantity" value="@product.Quantity" /></td>
-                  <td><select class="form-select" name="categoryId" aria-label="Default select example">
-                      <option value="@product.ProductCategory.Id" selected>@product.ProductCategory.ProductCategoryName</option>
-                      @foreach( var item in fillter){
-                      <option value="@item.Id">@item.ProductCategoryName</option>
-                      }
-                    </select></td>
-                  <td><select class="form-select" name="isDelete" aria-label="Default select example">
-                      <option value="@product.IsDeleted" selected>@product.IsDeleted</option>
-                      <option value="@isdelete">@isdelete</option>
-                    </select></td>
+                  <td>@article.Date</td>
+                  <td><select class="form-select" name="isAvailable" aria-label="Default select example">
+                      <option value="@article.IsDeleted" selected>@article.IsDeleted</option>
+                      <option value="@value">@value</option>
+                    </select>
+                  </td>
                   <td>
                     <button class="btn" style="border: none" type="submit"><i class="fa-solid fa-pen-to-square edit"></i></button>
-                    <a href="@Url.Action("delete","Product", new {id = product.Id})"><i class="fa-solid fa-trash delete"></i></a>
-                  </td>
+                    <a href="@Url.Action("delete","Article", new {id = article.Id})"><i class="fa-solid fa-trash delete"></i></a>
+                </td>
                 </tr>
                 </form>
                 }
@@ -295,7 +280,7 @@
             >
               <div class="d-flex align-items-center">
                 <i class="fa-solid fa-plus" style="margin-right: 20px"></i>
-                <span>Add New Product</span>
+                <span>Add Article</span>
               </div>
             </button>
           </div>
@@ -305,8 +290,8 @@
   </body>
 
   <!-- ========== modal ========== -->
-   <form asp-controller="Product" asp-action="create" method="post">
-<div
+   <form asp-controller="Article" asp-action="create" method="post">
+    <div
     class="modal fade"
     id="exampleModal"
     tabindex="-1"
@@ -314,7 +299,7 @@
     aria-hidden="true"
   >
     <div class="modal-dialog" >
-      <div class="modal-content" style="height: 620px;">
+      <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">
             Create Product
@@ -331,71 +316,24 @@
             <input
               type="text"
               class="form-control"
-              id="productName"
-              name="productName"
+              id="title"
+              name="title"
               required
             />
             <label style="font-weight: bold" for="userName"
-              >Product Name <span style="color: red">*</span></label
+              >Title <span style="color: red">*</span></label
             >
           </div>
           <div class="form-floating mb-3">
-            <input
+            <textarea
               type="text"
               class="form-control"
-              id="image"
-              name="image"
+              id="content"
+              name="content"
               required
-            />
-            <label style="font-weight: bold" for="email"
-              >Image <span style="color: red">*</span></label
-            >
-          </div>
-          <div class="form-floating mb-3">
-            <textarea class="form-control"  
-              id="description"
-              name="description"
-              required
-              placeholder="Leave a comment here" 
-              style="height: 100px"></textarea>
-            <label style="font-weight: bold" for="password"
-              >Description <span style="color: red">*</span></label
-            >
-          </div>
-          <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="price"
-              name="price"
-              required
-            />
-            <label style="font-weight: bold" for="Role"
-              >Price <span style="color: red">*</span></label
-            >
-          </div>
-          <div class="form-floating mb-3">
-            <input
-              type="number"
-              class="form-control"
-              id="quantity"
-              name="quantity"
-              required
-            />
-            <label style="font-weight: bold" for="Role"
-              >Quantity <span style="color: red">*</span></label
-            >
-          </div>
-          <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="productCategoryId"
-              name="productCategoryId"
-              required
-            />
-            <label style="font-weight: bold" for="Role"
-              >Category <span style="color: red">*</span></label
+            ></textarea>
+            <label style="font-weight: bold" for="userName"
+              >Content <span style="color: red">*</span></label
             >
           </div>
           <div class="d-flex justify-content-end gap-4">
@@ -410,7 +348,6 @@
        
       </div>
     </div>
-  </div>
   </form>
  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

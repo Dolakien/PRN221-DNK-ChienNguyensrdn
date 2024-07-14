@@ -32,14 +32,18 @@
                     <div class="col-1">
                     </div>
                     <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
-                        <a class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                        <a href="@Url.Action("Index", "Home")" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
                             Home
                         </a>
+
                     </div>
                     <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
-                        <a class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
-                            History
-                        </a>
+                        @if (loggedInAccount != null)
+                        {
+                            <a href="@Url.Action("getByUserId","Order", new {userId = loggedInAccount.Id})" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
+                                History
+                            </a>
+                        }
                     </div>
                     <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
                         <a class="btn" style="margin-left: 20px; margin-right: 20px; border: none">

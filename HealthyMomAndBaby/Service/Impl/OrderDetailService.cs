@@ -57,7 +57,6 @@ namespace HealthyMomAndBaby.Service.Impl
                 throw new InvalidOperationException($"Order Detail with id {orderDetail.Id} not found.");
             }
             existingOrderDetail.OrderId = orderDetail.OrderId;
-            existingOrderDetail.ProductId = orderDetail.ProductId;
             existingOrderDetail.Quantity = orderDetail.Quantity;
             existingOrderDetail.UnitPrice = orderDetail.UnitPrice;
 

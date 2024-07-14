@@ -1,23 +1,35 @@
 ﻿using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.InterFaces.Repository;
+using HealthyMomAndBaby.Models.Request;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthyMomAndBaby.Service.Impl
 {
     public class ArticleService : IArticleService
     {
         private readonly IRepository<Article> _articleRepository;
-        public ArticleService(IRepository<Article> articleRepository)
+        private readonly IRepository<Account> _accountRepository;
+        public ArticleService(IRepository<Article> articleRepository, IRepository<Account> accountRepository)
         {
             _articleRepository = articleRepository;
+            _accountRepository = accountRepository;
         }
-        public async Task AddArticleAsync(Article article)
+        public async Task AddArticleAsync(ArticleRequest article)
         {
             if (article == null)
             {
                 throw new ArgumentNullException(nameof(article));
             }
-
-            await _articleRepository.AddAsync(article);
+            var account = await _accountRepository.Get().Where(x => x.UserName == "admin").FirstAsync();
+            var newArticle = new Article
+            {
+                Title = article.Title,
+                Content = article.Content,
+                Date = DateTime.Now,
+                IsDeleted = false,
+                Author = account
+            };
+            await _articleRepository.AddAsync(newArticle);
             await _articleRepository.SaveChangesAsync();
         }
 
@@ -28,8 +40,8 @@ namespace HealthyMomAndBaby.Service.Impl
             {
                 throw new InvalidOperationException($"Article with id {id} not found.");
             }
-
-            _articleRepository.Delete(article);
+            article.IsDeleted = true;
+            _articleRepository.Update(article);
             await _articleRepository.SaveChangesAsync();
         }
 
@@ -43,7 +55,7 @@ namespace HealthyMomAndBaby.Service.Impl
             return await _articleRepository.GetValuesAsync();
         }
 
-        public async Task UpdateArticleAsync(Article article)
+        public async Task UpdateArticleAsync(UpdateArticle article)
         {
             if (article == null)
             {
@@ -57,10 +69,9 @@ namespace HealthyMomAndBaby.Service.Impl
             }
             existingArticle.Title = article.Title;
             existingArticle.Content = article.Content;
-            existingArticle.Date = article.Date;
-            existingArticle.AuthorId = article.AuthorId;
+            existingArticle.Date = DateTime.Now;
 
-            _articleRepository.Update(article);
+            _articleRepository.Update(existingArticle);
             await _articleRepository.SaveChangesAsync();
         }
     }

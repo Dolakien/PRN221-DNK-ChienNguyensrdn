@@ -3,10 +3,10 @@
     @using HealthyMomAndBaby
     @using HealthyMomAndBaby.Models
     @using HealthyMomAndBaby.Entity
+    @using Newtonsoft.Json;
     @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 }
 @model IEnumerable<Account>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -82,6 +82,14 @@
 }
 </style>
   
+@{
+       var username = Context.Session.GetString("LoggedInAccount");
+       Account user = null;
+            if (username != null)
+            {
+                user = JsonConvert.DeserializeObject<Account>(username);
+            }
+}
 
   <body style="background-color: #f7f7f7; width: 100vw">
     <div
@@ -95,7 +103,7 @@
         height="40"
         class="rounded-circle mx-4"
       />
-      <h3>Trần Thanh Sơn</h3>
+      <h3> Welcome @user?.UserName</h3>
       <a href="@Url.Action("logout", "Account")" class="btn btn-danger ms-auto" style="margin-right: 20px">
         Logout
       </a>
@@ -159,10 +167,11 @@
                 <span>Category</span>
               </div>
             </a>
-            <button
+            <a
               type="button"
               class="btnha btn btn-outline-primary"
               style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Orders", "Admin")"
             >
               <div class="d-flex align-items-center">
                 <i
@@ -171,17 +180,35 @@
                 ></i>
                 <span>Order</span>
               </div>
-            </button>
-            <button
+            </a>
+             <a
               type="button"
               class="btnha btn btn-outline-primary"
               style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Articles", "Admin")"
             >
               <div class="d-flex align-items-center">
-                <i class="fa-solid fa-gear" style="margin-right: 23px"></i>
-                <span>Setting</span>
+                <i
+                  class="fa-solid fa-file-invoice"
+                  style="margin-right: 23px"
+                ></i>
+                <span>Article</span>
               </div>
-            </button>
+            </a>
+             <a
+              type="button"
+              class="btnha btn btn-outline-primary"
+              style="width: 200px; margin-top: 5px; border: none"
+              href="@Url.Action("Vouchers", "Admin")"
+            >
+              <div class="d-flex align-items-center">
+                <i
+                  class="fa-solid fa-file-invoice"
+                  style="margin-right: 23px"
+                ></i>
+                <span>Voucher</span>
+              </div>
+            </a>
           </div>
         </div>
         <!-- ========== col2 ========== -->

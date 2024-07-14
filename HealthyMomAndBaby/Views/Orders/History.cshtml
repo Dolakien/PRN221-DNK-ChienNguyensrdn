@@ -1,12 +1,11 @@
 ﻿@{
-    ViewData["Title"] = "Product";
-    @using HealthyMomAndBaby
+    ViewData["Title"] = "History";
+    @using HealthyMomAndBaby;
     @using HealthyMomAndBaby.Models
     @using HealthyMomAndBaby.Entity
     @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 }
-@model Product
-
+@model IEnumerable<Order>
 <!DOCTYPE html>
 <bo lang="en">
   <head>
@@ -69,24 +68,24 @@
 <!-- hình động-->
 
 <div class="container rounded" style="height: 68vh; background-color: white; margin-top: 20px;">
-    <h1>@Model.ProductName</h1>
-    <hr>
-    <div class="">
-        <div class="row">
-          <div class="col-5">
-            <img src="@Model.Image" alt="" width="400" height="500">
-          </div>
-          <div class="col">
-            
-            <h3 style="color: red;">@Model.Price đ</h3>
-            <div>
-                <a href="@Url.Action("AddToCart","Order", new {id = @Model.Id, quantity = 1, Page = ""})" class="btn btn-success">Add to cart</a>
-                <a href="@Url.Action("BuyNow","Order", new {id = @Model.Id})" class="btn btn-danger">Buy now</a>
-            </div>
-            <div>@Model.Description</div>
-          </div>
-        </div>
-      </div>
+   <table class="table">
+        <tr>
+            <th>Order Code</th>
+            <th>Full Name</th>
+            <th>Ship Address</th>
+            <th>Phone Number</th>
+            <th>Total Price</th>
+        </tr>
+          @foreach (var order in Model) {
+        <tr>
+            <td>@order.Id</td>
+            <td>@order.FullName</td>
+            <td>@order.ShipAddress</td>
+            <td>@order.PhoneNumber</td>
+            <td>@order.Total</td>
+       </tr>
+          }
+   </table>
 </div>
 
   <!-- Footer-->
@@ -95,7 +94,7 @@
    </div>
   </body>
  
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 </html>
