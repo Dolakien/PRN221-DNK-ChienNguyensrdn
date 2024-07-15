@@ -259,13 +259,11 @@
                       </select></td>
                   <td>
                     @if(!isAdmin){
-                        <button type="submit" style="border: none; background-color: white" disabled="@isAdmin">
-                        <i class="fa-solid fa-pen-to-square edit"></i>
+                        <button class="btn btn-success" type="submit" disabled="@isAdmin">
+                            Edit
                         </button>
-                        <a href="@Url.Action("delete","Account", new {id = account.Id})"><i class="fa-solid fa-trash delete"></i></a>
+                        <a class="btn btn-danger" href="@Url.Action("delete","Account", new {id = account.Id})">Delete</a>
                     }else {
-                        <i class="fa-solid fa-pen-to-square" style="margin-right: 3px;color: lightblue; cursor: not-allowed;"></i>
-                        <i class="fa-solid fa-trash" style="color: lightcoral; cursor: not-allowed;"></i>
                     }
                   </td>
                   </form>

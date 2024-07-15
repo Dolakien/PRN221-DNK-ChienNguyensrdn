@@ -68,7 +68,7 @@
                                  class="rounded-circle mx-4" />
                             <h3 class="mx-4">Trần Thanh Sơn</h3>
                             <div>
-                                <a href="@Url.Action("Cart", "Order")"><i class="fa-solid fa-cart-shopping" style="font-size: 30px;"></i></a>
+                                <a class="btn btn-success" href="@Url.Action("Cart", "Order")">Cart</a>
                             </div>
                             <a href="@Url.Action("logout", "Account")" class="btn btn-danger" style="margin-left: 20px; margin-right: 20px;">
                                 Logout
@@ -169,8 +169,8 @@
                         <div style="line-height: 18px; font-size: 14px;">@product.ProductName</div>
                         <div style="font-weight: bold; font-size: 18px; color: red;">@product.Price đ</div>
                         <div class="d-flex justify-content-between">
-                            <a href="@Url.Action("getById","Product", new {id = product.Id})"><i class="fa-solid fa-circle-info" style="font-size: 30px; color: #0d99ff;"></i></a>
-                            <a href="@Url.Action("AddToCart","Order", new {id = product.Id, quantity = 1, Page = "Home"})"><i class="fa-solid fa-cart-shopping" style="font-size: 30px; color: #009600;"></i></a>
+                            <a class="btn btn-primary" href="@Url.Action("getById","Product", new {id = product.Id})">Detail</a>
+                            <a class="btn btn-success" href="@Url.Action("AddToCart","Order", new {id = product.Id, quantity = 1, Page = "Home"})">Add To Cart</a>
                         </div>
                     </div>
                 }

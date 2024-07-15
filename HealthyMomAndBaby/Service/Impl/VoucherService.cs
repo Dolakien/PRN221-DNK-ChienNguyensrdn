@@ -20,7 +20,7 @@ namespace HealthyMomAndBaby.Service.Impl
             {
                 throw new ArgumentNullException(nameof(voucher));
             }
-			var account = await _accountRepository.Get().Where(x => x.UserName == "admin").FirstAsync();
+			var account = await _accountRepository.Get().Where(x => x.Role.RoleName == "ADMIN").FirstAsync();
 			var newVoucher = new Voucher
             {
                 Discount = Double.Parse(voucher.Discount),

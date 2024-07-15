@@ -249,8 +249,8 @@
                     </select>
                   </td>
                   <td>
-                    <button class="btn" style="border: none" type="submit"><i class="fa-solid fa-pen-to-square edit"></i></button>
-                    <a href="@Url.Action("delete","Article", new {id = article.Id})"><i class="fa-solid fa-trash delete"></i></a>
+                    <button class="btn btn-success" style="border: none" type="submit">Edit</button>
+                    <a class="btn btn-danger" href="@Url.Action("delete","Article", new {id = article.Id})">Delete</a>
                 </td>
                 </tr>
                 </form>
