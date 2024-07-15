@@ -244,7 +244,7 @@
                   <td>@voucher.IsDeleted          
                   </td>
                   <td>
-                    <a href="@Url.Action("delete","Voucher", new {id = voucher.Id})"><i class="fa-solid fa-trash delete"></i></a>
+                    <a class="btn btn-danger" href="@Url.Action("delete","Voucher", new {id = voucher.Id})">Delete</a>
                 </td>
                 </tr>
                 }

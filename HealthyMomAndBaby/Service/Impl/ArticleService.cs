@@ -20,7 +20,7 @@ namespace HealthyMomAndBaby.Service.Impl
             {
                 throw new ArgumentNullException(nameof(article));
             }
-            var account = await _accountRepository.Get().Where(x => x.UserName == "admin").FirstAsync();
+            var account = await _accountRepository.Get().Where(x => x.Role.RoleName == "ADMIN").FirstAsync();
             var newArticle = new Article
             {
                 Title = article.Title,
