@@ -12,14 +12,20 @@ namespace HealthyMomAndBaby.Controllers
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
         private readonly IVoucherService _voucherService;
+        private readonly IOrderDetailService _orderDetailService;
+        private readonly IAccountService _accountService;
 
-        public OrdersController(IOrderService orderService, 
+        public OrdersController(IOrderService orderService,
             IProductService productService,
-            IVoucherService voucherService)
+            IVoucherService voucherService,
+            IOrderDetailService orderDetailService,
+            IAccountService accountService)
         {
             _orderService = orderService;
             _productService = productService;
             _voucherService = voucherService;
+            _orderDetailService = orderDetailService;
+            _accountService = accountService;
         }
 
         [HttpGet("Cart")]
@@ -105,14 +111,22 @@ namespace HealthyMomAndBaby.Controllers
         }
 
         [HttpGet("getByUserId")]
-        public async Task<IActionResult> OrdersByUserId([FromQuery]int userId)
+        public async Task<IActionResult> OrdersByUserId([FromQuery] int userId)
         {
             var orders = await _orderService.GetOrdersByUserId(userId);
 
             return View("History", orders);
         }
 
-        [HttpGet("AddToCart/{id}")]
+        [HttpGet("OrderDetail/{id}")]
+        public async Task<IActionResult> OrderDetailById([FromRoute] int id)
+		{
+			var orders = await _orderDetailService.GetDetailByOrderId(id);
+
+			return View("Detail", orders);
+		}
+
+		[HttpGet("AddToCart/{id}")]
         public async Task<IActionResult> AddToCart(int id, int quantity, string page)
 
         {
@@ -242,6 +256,7 @@ namespace HealthyMomAndBaby.Controllers
         [HttpPost("AddCode")]
         public async Task<IActionResult> Create(AddCode addCode)
         {
+            if(addCode.Code == null) return RedirectToAction("Cart", "Order");
             var voucher = await _voucherService.GetVoucherByCode(addCode.Code);
             HttpContext.Session.SetString("Discount", voucher?.Discount.ToString() ?? "1");
             return RedirectToAction("Cart", "Order");
@@ -258,6 +273,9 @@ namespace HealthyMomAndBaby.Controllers
             order.CustomerId = loggedInAccount.Id;
             await _orderService.AddOrderAsync(order);
             cart = [];
+            
+            string newAccount = JsonConvert.SerializeObject(await _accountService.GetUserById(loggedInAccount.Id));
+            HttpContext.Session.SetString("LoggedInAccount", newAccount);
             cartJson = JsonConvert.SerializeObject(cart);
             HttpContext.Session.SetString("Cart",cartJson);
             return RedirectToAction("Index", "Home");

@@ -1,5 +1,6 @@
 ﻿using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.InterFaces.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace HealthyMomAndBaby.Service.Impl
 {
@@ -34,7 +35,12 @@ namespace HealthyMomAndBaby.Service.Impl
             await _orderDetailRepository.SaveChangesAsync();
         }
 
-        public async Task<OrderDetail?> GetDetailOrderDetailByIdAsync(int id)
+		public async Task<List<OrderDetail>> GetDetailByOrderId(int orderId)
+		{
+			return await _orderDetailRepository.Get().Where(x => x.Order.Id == orderId).ToListAsync();
+		}
+
+		public async Task<OrderDetail?> GetDetailOrderDetailByIdAsync(int id)
         {
             return await _orderDetailRepository.GetAsync(id);
         }

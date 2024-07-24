@@ -9,5 +9,6 @@ namespace HealthyMomAndBaby.Service
         Task DeleteOrderDetailAsync(int id);
         Task<List<OrderDetail?>> ShowListOrderDetailAsync();
         Task<OrderDetail?> GetDetailOrderDetailByIdAsync(int id);
+        Task<List<OrderDetail>> GetDetailByOrderId(int orderId);
     }
 }
