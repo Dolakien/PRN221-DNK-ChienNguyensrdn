@@ -33,8 +33,8 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddGoogle(options =>
 {
-    options.ClientId = "";
-    options.ClientSecret = "";
+    options.ClientId = "533497993716-qnhof5pfd6nh2pppg84kort2uounmv1f.apps.googleusercontent.com";
+    options.ClientSecret = "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";
     options.Scope.Add("email"); // Thêm scope email
     options.SaveTokens = true;
     options.CallbackPath = "/signin-google"; // Đảm bảo đường dẫn callback chính xác
