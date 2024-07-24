@@ -1,8 +1,11 @@
 ﻿using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.Models.Request;
 using HealthyMomAndBaby.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace HealthyMomAndBaby.Controllers
 {
@@ -10,9 +13,12 @@ namespace HealthyMomAndBaby.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService)
+        private readonly IAuthenticationSchemeProvider _schemeProvider;
+
+        public AccountController(IAccountService accountService, IAuthenticationSchemeProvider schemeProvider)
         {
             _accountService = accountService;
+            _schemeProvider = schemeProvider;
         }
 
         [HttpGet("")]
@@ -42,7 +48,7 @@ namespace HealthyMomAndBaby.Controllers
 
                 // Lưu chuỗi JSON vào Session
                 HttpContext.Session.SetString("LoggedInAccount", accountJson);
-                // return RedirectToAction("Dashboard", "Home");
+                // return RedirectToAction("Dashboard", "Home");    
                 if(account.Role.RoleName == "ADMIN")
                 {
                     return RedirectToAction("Admin", "Admin"); // Chuyển hướng đến trang chính\
@@ -133,6 +139,74 @@ namespace HealthyMomAndBaby.Controllers
             }
         }
 
+
+        [HttpGet("ExternalLogin")]
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet("ExternalLoginCallback")]
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            var info = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (info?.Principal == null)
+            {
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            // Lấy email từ claims
+            var emailClaim = info.Principal.FindFirst(ClaimTypes.Email) ?? info.Principal.FindFirst("email");
+            var email = emailClaim?.Value;
+
+            var nameClaim = info.Principal.FindFirst(ClaimTypes.Name) ?? info.Principal.FindFirst("name");
+            var name = nameClaim?.Value;
+
+            var password = " ";
+
+            if (email != null && name != null && password != null)
+            {
+                var account1 = await _accountService.GetAccountByEmailAsync(email);
+                if(account1 == null) {
+                    await _accountService.Register(name, password, email); 
+                }
+
+                var account = await _accountService.Login(name, password);
+
+                if (account != null)
+                {
+                    // Đăng nhập thành công, lưu chuỗi JSON vào Session
+                    string accountJson = JsonConvert.SerializeObject(account);
+                    HttpContext.Session.SetString("LoggedInAccount", accountJson);
+
+                    // Chuyển hướng dựa trên vai trò của tài khoản
+                    if (account.Role.RoleName == "ADMIN")
+                    {
+                        return RedirectToAction("Admin", "Admin");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Login));
+                }
+
+            }
+            return LocalRedirect(returnUrl ?? "/");
+
+        }
     }
 }
 

@@ -83,7 +83,5 @@ namespace HealthyMomAndBaby.Repositories
             }
             _transaction = _healthyMomAndBabyContext.Database.BeginTransaction();
         }
-
-
     }
 }

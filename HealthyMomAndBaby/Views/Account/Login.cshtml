@@ -1,9 +1,15 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Google
+
+@{
     ViewData["Title"] = "Login";
     @using HealthyMomAndBaby
     @using HealthyMomAndBaby.Models
     @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 }
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -81,6 +87,8 @@
                   >Create new account</span
                 ></a
               >
+              <a asp-controller="Account" asp-action="ExternalLogin" asp-route-provider="Google" asp-route-returnUrl="@Url.Action("Index", "Home")" class="btn btn-default">Log in with Google</a>
+             
             </div>
          </form>
       </div>

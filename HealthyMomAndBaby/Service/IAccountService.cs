@@ -13,5 +13,6 @@ namespace HealthyMomAndBaby.Service
         Task<List<Account>> GetAllUser();
         Task<Account> GetUserById(int id);
         Task<Account?> GetDetailProductAsync(int id);
+        Task<Account?> GetAccountByEmailAsync(string email);
     }
 }

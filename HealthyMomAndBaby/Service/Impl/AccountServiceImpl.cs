@@ -2,7 +2,6 @@
 using HealthyMomAndBaby.InterFaces.Repository;
 using HealthyMomAndBaby.Models.Request;
 using Microsoft.EntityFrameworkCore;
-
 using static NuGet.Packaging.PackagingConstants;
 
 
@@ -40,6 +39,8 @@ namespace HealthyMomAndBaby.Service.Impl
         public async Task DeleteAccountAsync(int id)
 		{
             var account = await _accountRepository.GetAsync(id);
+
+
             if (account == null)
             {
                 throw new InvalidOperationException($"Account with id {id} not found.");
@@ -48,6 +49,11 @@ namespace HealthyMomAndBaby.Service.Impl
             account.Status = true;
             _accountRepository.Update(account);  
             await _accountRepository.SaveChangesAsync();
+        }
+
+        public async Task<Account?> GetAccountByEmailAsync(string email)
+        {
+            return await _accountRepository.Get().Where(x => x.Email == email).FirstOrDefaultAsync();
         }
 
         public async Task<Account?> GetDetailProductAsync(int id)
