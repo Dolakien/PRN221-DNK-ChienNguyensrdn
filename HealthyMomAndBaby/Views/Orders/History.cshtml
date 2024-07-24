@@ -82,7 +82,7 @@
                                width="40"
                                height="40"
                                class="rounded-circle mx-4" />
-                          <h3 class="mx-4">Trần Thanh Sơn</h3>
+                          <h3 class="mx-4">@loggedInAccount.UserName</h3>
                           <div>
                               <a class="btn btn-success" href="@Url.Action("Cart", "Order")">Cart</a>
                           </div>
@@ -115,6 +115,7 @@
             <th>Ship Address</th>
             <th>Phone Number</th>
             <th>Total Price</th>
+			<th></th>
         </tr>
           @foreach (var order in Model) {
         <tr>
@@ -123,6 +124,9 @@
             <td>@order.ShipAddress</td>
             <td>@order.PhoneNumber</td>
             <td>@order.Total</td>
+			<td><a href="@Url.Action("OrderDetail", "Order",new {id = order.Id})" class="btn btn-danger" style="margin-left: 20px; margin-right: 20px;">
+                              Detail
+                          </a></td>
        </tr>
           }
    </table>
@@ -253,8 +257,7 @@
 								<i class="icons icon-youtube icon-lg mb-10"></i>							
 							Youtube
 							</a>
-													</div> 
-						
+					</div> 
 				  </div>
             </div>
 			 

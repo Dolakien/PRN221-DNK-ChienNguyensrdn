@@ -140,6 +140,11 @@ namespace HealthyMomAndBaby.Service.Impl
             _accountRepository.Update(existingAccount);  // Update method is synchronous
             await _accountRepository.SaveChangesAsync();
         }
+
+        public async Task<Account> GetUserById(int id)
+        {
+            return await _accountRepository.Get().Include(x => x.Role).FirstAsync(x => x.Id == id);
+        }
     }
 }
 

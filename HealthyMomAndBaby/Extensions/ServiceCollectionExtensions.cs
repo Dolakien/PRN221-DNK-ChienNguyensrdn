@@ -14,6 +14,7 @@ namespace HealthyMomAndBaby.Extensions
 			services.AddScoped<IAccountService, AccountServiceImpl>();
             services.AddScoped<IVoucherService, VoucherService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
+			services.AddScoped<IOrderDetailService, OrderDetailService>();
             services.AddSession();
 
         }
