@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddGoogle(options =>
 {
-    options.ClientId = "533497993716-qnhof5pfd6nh2pppg84kort2uounmv1f.apps.googleusercontent.com";
+    options.ClientId = "";
     options.ClientSecret = "";
     options.Scope.Add("email"); // Thêm scope email
     options.SaveTokens = true;
