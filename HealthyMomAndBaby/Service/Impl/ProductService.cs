@@ -66,6 +66,11 @@ namespace HealthyMomAndBaby.Service.Impl
             return await _productRepository.Get().Include(x => x.ProductCategory).Where(x => x.IsDeleted == false).ToListAsync();
         }
 
+        public async Task<List<Product>> Search(string search)
+        {
+            return await _productRepository.Get().Include(x => x.ProductCategory).Where(x => x.IsDeleted == false) .Where(x => x.ProductName.Contains(search)).ToListAsync();
+        }
+
         public async Task<List<Product>> ShowListProductAsync()
         {
             return await _productRepository.Get().Include(x => x.ProductCategory).ToListAsync();

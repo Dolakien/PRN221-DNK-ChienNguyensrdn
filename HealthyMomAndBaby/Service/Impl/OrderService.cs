@@ -53,6 +53,16 @@ namespace HealthyMomAndBaby.Service.Impl
                     Product = product
                 };
                 orderDetails.Add(orderDetail);
+                var pQuantity = product.Quantity - cart.Quantity;
+                if(pQuantity <= 0)
+                {
+                    product.Quantity = 0;
+                    product.IsDeleted = true;
+                }else
+                {
+                    product.Quantity = pQuantity;
+                }
+
             }
             var account = await _accountRepository.Get().Where(x => x.Id == order.CustomerId).FirstAsync();
 
@@ -67,7 +77,7 @@ namespace HealthyMomAndBaby.Service.Impl
                 User = account
             };
             account.Point = account.Point + (int) Math.Round(order.TotalPrice / 1000);
-
+           
             await _orderRepository.AddAsync(newOrder);
             await _orderRepository.SaveChangesAsync();
 

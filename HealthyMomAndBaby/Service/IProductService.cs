@@ -11,5 +11,6 @@ namespace HealthyMomAndBaby.Service
         Task<List<Product>> ShowListProductAsync();
         Task<Product?> GetDetailProductAsync(int id);
         Task<List<Product>> GetProductIsAvailable();
+        Task<List<Product>> Search(string search);
     }
 }
