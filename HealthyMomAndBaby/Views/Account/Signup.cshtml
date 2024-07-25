@@ -24,11 +24,16 @@
     />
   </head>
 
+  @{
+      string error = Context.Session?.GetString("error") ?? "";
+  }
+
   <body
     class="d-flex flex-column justify-content-center align-items-center"
     style="background-color: #f7f7f7; height: 80vh; width: 100vw"
   >
     <h1>Create an account</h1>
+    <div style="color: red">@error</div>
     <div
       class=""
       style="
