@@ -5,6 +5,7 @@ using HealthyMomAndBaby.Common;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using MailKit.Net.Smtp;
+using System.Net;
 
 namespace HealthyMomAndBaby.Service.Impl
 {
@@ -12,17 +13,13 @@ namespace HealthyMomAndBaby.Service.Impl
     {
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductCategory> _productCategoryRepository;
-        private readonly IRepository<Account> _accountRepository;
-        private readonly IAccountService _accountService;
-        //private readonly SmtpSettings _smtpsetting;
 
-        public ProductService(IRepository<Product> productRepository, IRepository<ProductCategory> productCategoryRepository/*, SmtpSettings smtpSettings*/, IRepository<Account> accountRepository, IAccountService accountService)
+
+        public ProductService(IRepository<Product> productRepository, IRepository<ProductCategory> productCategoryRepository)
         {
             _productRepository = productRepository;
             _productCategoryRepository = productCategoryRepository;
-            //_smtpsetting = smtpSettings;
-            _accountRepository = accountRepository;
-            _accountService = accountService;
+
         }
         public async Task AddProductAsync(CreateProduct product)
         {
@@ -97,54 +94,6 @@ namespace HealthyMomAndBaby.Service.Impl
 
             _productRepository.Update(existingProduct);  // Update method is synchronous
             await _productRepository.SaveChangesAsync();
-        }
-
-
-
-
-        //private async Task SendAddProductEmail(int Id, string productNamme)
-        //{
-        //    var member = await _accountService.GetDetailProductAsync(Id);
-        //    if (member == null || string.IsNullOrEmpty(member.Email))
-        //    {
-        //        throw new Exception($"Member with FeId {Id} not found or has no email specified.");
-        //    }
-
-        //    var message = new MimeMessage();
-        //    message.From.Add(new MailboxAddress("ExchangeGood System", _smtpsetting.Username));
-        //    message.To.Add(new MailboxAddress(member.UserName, member.Email));
-        //    message.Subject = "New Report sended";
-
-        //    var bodyBuilder = new BodyBuilder();
-        //    bodyBuilder.HtmlBody = $@"
-        //    <p>Dear {member.UserName},</p>
-        //    <p>We are pleased to inform you that your report to Product: <strong>{productNamme}</strong> has been successfully approved to ExchangeGood.</p>
-        //    <p>If you have any feedbacks, please respond to this mail!</p>
-        //    <p>Thank you for using our platform!</p>
-        //    <p>Best regards,</p>
-        //    <p>The ExchangeGood Team</p>
-        //";
-
-        //    message.Body = bodyBuilder.ToMessageBody();
-
-        //    using (var client = new SmtpClient())
-        //    {
-        //        try
-        //        {
-        //            client.Connect(_smtpsetting.SmtpServer, _smtpsetting.Port, _smtpsetting.UseSsl);
-        //            client.Authenticate(_smtpsetting.Username, _smtpsetting.Password);
-        //            await client.SendAsync(message);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine($"Failed to send email: {ex.Message}");
-        //            throw;
-        //        }
-        //        finally
-        //        {
-        //            await client.DisconnectAsync(true);
-        //        }
-        //    }
-        //}
+        }   
     }
 }

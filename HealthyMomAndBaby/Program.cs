@@ -10,6 +10,7 @@ using HealthyMomAndBaby.Service.Impl;
 using HealthyMomAndBaby.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using HealthyMomAndBaby.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,9 @@ builder.Services.AddDbContext<HealthyMomAndBabyContext>(options =>
 
 // Register additional services
 builder.Services.Register();
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
 
 var app = builder.Build();
 
