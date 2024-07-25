@@ -130,6 +130,11 @@ namespace HealthyMomAndBaby.Controllers
         public async Task<IActionResult> AddToCart(int id, int quantity, string page)
 
         {
+            string accountJson = HttpContext.Session?.GetString("LoggedInAccount");
+            if (accountJson == null)
+            {
+                return RedirectToAction("", "Account");
+            }
             var product = await _productService.GetDetailProductAsync(id);
 
             // Retrieve the existing cart from the session
@@ -187,6 +192,12 @@ namespace HealthyMomAndBaby.Controllers
         [HttpGet("BuyNow/{id}")]
         public async Task<IActionResult>  BuyNow(int id)
         {
+            string accountJson = HttpContext.Session?.GetString("LoggedInAccount");
+            if (accountJson == null)
+            {
+                return RedirectToAction("", "Account");
+            }
+
             var product = await _productService.GetDetailProductAsync(id);
             var cartJson = HttpContext.Session.GetString("Cart");
             HashSet<CartRequest> cart;
