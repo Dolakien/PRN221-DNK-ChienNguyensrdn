@@ -123,6 +123,7 @@ namespace HealthyMomAndBaby.Service.Impl
 
                 await _accountRepository.AddAsync(account);
                 await _accountRepository.SaveChangesAsync();
+                await SendSignUpEmail(email);
             }
             catch (Exception ex)
             {
@@ -166,27 +167,17 @@ namespace HealthyMomAndBaby.Service.Impl
 
 
 
-        public async Task<bool> ResetPassword(ResetPasswordRequest resetPassword)
+        public async Task<bool> ResetPassword(SendEmailRequest sendEmailRequest)
         {
-            var account = await GetAccountByUserNameAsync(resetPassword.UserName);
+            var account = await GetAccountByEmailAsync(sendEmailRequest.Email);
             if (account == null)
             {
                 return false;
             }
 
-            if (resetPassword.NewPassword != resetPassword.ConfirmNewPassword)
-            {
-                return false;
-            }
 
-            var passwordRequest = new PasswordRequest
-            {
-                UserName = resetPassword.UserName,
-                NewPassword = resetPassword.NewPassword,
-                ConfirmPassword = resetPassword.ConfirmNewPassword
-            };
 
-            var isUpdate = await UpdatePassword(passwordRequest);
+            var isUpdate = await UpdatePassword(sendEmailRequest);
 
             await SendResetPasswordEmail(account.Email);
 
@@ -195,9 +186,9 @@ namespace HealthyMomAndBaby.Service.Impl
 
 
 
-        public async Task<bool> UpdatePassword(PasswordRequest passwordRequest)
+        public async Task<bool> UpdatePassword(SendEmailRequest sendEmailRequest)
         {
-            var account = await GetAccountByUserNameAsync(passwordRequest.UserName);
+            var account = await GetAccountByEmailAsync(sendEmailRequest.Email);
 
 
             if (account == null)
@@ -205,9 +196,20 @@ namespace HealthyMomAndBaby.Service.Impl
                 return false;
             }
             // check old password
-            if (account.UserName == passwordRequest.UserName)
+            if (account.Email == sendEmailRequest.Email)
             {
-                account.Password = passwordRequest.NewPassword;
+                int length = 6;
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                var random = new Random();
+                var passwordChars = new char[length];
+
+                for (int i = 0; i < length; i++)
+                {
+                    passwordChars[i] = chars[random.Next(chars.Length)];
+                }
+                string password = new string(passwordChars);
+
+                account.Password = password;
                 await UpdateAccountPassword(account);
                 await _accountRepository.SaveChangesAsync();
                 return true;
@@ -249,6 +251,50 @@ namespace HealthyMomAndBaby.Service.Impl
             bodyBuilder.HtmlBody = $@"
                 <p>Dear {account.UserName},</p>
                 <p>Your password has been successfully changed.</p>
+                <p>Your new password is: <strong>{account.Password}</strong>.</p>
+                <p>If you did not make this change, please contact support immediately.</p>
+                <p>Thank you,</p>
+            ";
+
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using (var client = new SmtpClient())
+            {
+                try
+                {
+                    client.Connect(_smtpsetting.SmtpServer, _smtpsetting.Port, _smtpsetting.UseSsl);
+                    client.Authenticate(_smtpsetting.Username, _smtpsetting.Password);
+                    await client.SendAsync(message);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                    return false;
+                }
+                finally
+                {
+                    await client.DisconnectAsync(true);
+                }
+            }
+        }
+
+        public async Task<bool> SendSignUpEmail(string email)
+        {
+            var account = await GetAccountByEmailAsync(email);
+            if (account == null)
+            {
+                return false;
+            }
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("HealthyMomAndBaby System", _smtpsetting.Username));
+            message.To.Add(new MailboxAddress("", email));
+            message.Subject = "Sign Up";
+
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = $@"
+                <p>Dear {account.UserName},</p>
+                <p>Your account has been successfully created: With Email: <strong>{account.Email}</strong> . With UserName : <strong>{account.UserName}</strong>.</p>
                 <p>If you did not make this change, please contact support immediately.</p>
                 <p>Thank you,</p>
             ";

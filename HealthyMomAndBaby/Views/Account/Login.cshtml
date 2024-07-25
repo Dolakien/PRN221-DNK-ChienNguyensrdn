@@ -78,6 +78,10 @@
             <button class="btn btn-primary mb-2" style="width: 28vw" type="submit">
               <div style="font-weight: bold; font-size: large">Login</div>
             </button>
+
+                              <button class="btn btn-primary mb-2" style="width: 28vw; font-weight: bold; font-size: large" type="button" onclick="redirectToExternalLogin()">
+   <div style="font-weight: bold; font-size: large">Log in with Google</div>
+</button>
             <div class="d-flex justify-content-between">
               <span style="font-weight: bold; font-size: large"
                 >Don't have account?</span
@@ -87,8 +91,21 @@
                   >Create new account</span
                 ></a
               >
-              <a asp-controller="Account" asp-action="ExternalLogin" asp-route-provider="Google" asp-route-returnUrl="@Url.Action("Index", "Home")" class="btn btn-default">Log in with Google</a>
+                     
+
+@*               <a asp-controller="Account" asp-action="ExternalLogin" asp-route-provider="Google" asp-route-returnUrl="@Url.Action("Index", "Home")" class="btn btn-default">
+                  
+                  Log in with Google</a>  *@
              
+
+
+<script>
+function redirectToExternalLogin() {
+    const returnUrl = '@Url.Action("Index", "Home")';
+    const url = `@Url.Action("ExternalLogin", "Account")?provider=Google&returnUrl=${returnUrl}`;
+    window.location.href = url;
+}
+</script>
             </div>
          </form>
       </div>

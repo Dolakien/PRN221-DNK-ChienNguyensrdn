@@ -71,7 +71,7 @@ namespace HealthyMomAndBaby.Service.Impl
             await _orderRepository.AddAsync(newOrder);
             await _orderRepository.SaveChangesAsync();
 
-            await SendResetPasswordEmail(account.Id);
+            await SendOrderEmail(account.Id);
         }
 
         public async Task DeleteOrderAsync(int id)
@@ -125,7 +125,7 @@ namespace HealthyMomAndBaby.Service.Impl
 
         }
 
-        public async Task<bool> SendResetPasswordEmail(int id)
+        public async Task<bool> SendOrderEmail(int id)
         {
             var account = await _accountService.GetDetailProductAsync(id);
             if (account == null)
@@ -135,7 +135,7 @@ namespace HealthyMomAndBaby.Service.Impl
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("HealthyMomAndBaby System", _smtpsetting.Username));
             message.To.Add(new MailboxAddress("", account.Email));
-            message.Subject = "Reset Your Password";
+            message.Subject = "Checkout Order";
 
             var bodyBuilder = new BodyBuilder();
             bodyBuilder.HtmlBody = $@"

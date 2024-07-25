@@ -215,9 +215,9 @@ namespace HealthyMomAndBaby.Controllers
         }
 
         [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgotPassword(ResetPasswordRequest resetPassword)
+        public async Task<IActionResult> ForgotPassword(SendEmailRequest sendEmailRequest)
         {
-            var isUpdate = await _accountService.ResetPassword(resetPassword);
+            var isUpdate = await _accountService.ResetPassword(sendEmailRequest);
             if(!isUpdate)
             {
                 return View("ForgotPassword");
