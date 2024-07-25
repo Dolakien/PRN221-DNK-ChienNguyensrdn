@@ -24,6 +24,7 @@ namespace HealthyMomAndBaby.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
+            HttpContext.Session.SetString("errorLogin", "");
             return View("Login");
         }
 
@@ -64,12 +65,14 @@ namespace HealthyMomAndBaby.Controllers
                 // Đăng nhập thất bại, bạn có thể hiển thị thông báo lỗi hoặc chuyển hướng đến trang đăng nhập lại, v.v.
                 // Ví dụ:
                 // ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng.");
+                HttpContext.Session.SetString("errorLogin", "Pleasse check your username or password again");
                 return View("Login"); // Hiển thị lại trang đăng nhập
             }
         }
         [HttpGet("SignUp")]
         public IActionResult Signup()
         {
+            HttpContext.Session.SetString("error", "");
             return View();
         }
 
@@ -81,7 +84,8 @@ namespace HealthyMomAndBaby.Controllers
                 return RedirectToAction("Index", "Home" ,model); // Show the signup page again with validation errors
             } catch (Exception e)
             {
-                return View("SignUp");
+				HttpContext.Session.SetString("error", "Duplicate Email");
+				return View("SignUp");
             }
             
         }
@@ -211,6 +215,7 @@ namespace HealthyMomAndBaby.Controllers
         [HttpGet("ForgotPassword")]
         public IActionResult ForgotPassword()
         {
+            HttpContext.Session.SetString("errorForgot", "");
             return View();
         }
 
@@ -220,6 +225,7 @@ namespace HealthyMomAndBaby.Controllers
             var isUpdate = await _accountService.ResetPassword(sendEmailRequest);
             if(!isUpdate)
             {
+                HttpContext.Session.SetString("errorForgot", "Pleasse check your email again");
                 return View("ForgotPassword");
             }
             return View("Login");

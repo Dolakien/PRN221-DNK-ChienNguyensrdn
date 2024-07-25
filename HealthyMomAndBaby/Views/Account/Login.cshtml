@@ -30,12 +30,16 @@
       crossorigin="anonymous"
     />
   </head>
+    @{
+      string error = Context.Session?.GetString("errorLogin") ?? "";
+  }
 
   <body
     class="d-flex flex-column justify-content-center align-items-center"
     style="background-color: #f7f7f7; height: 80vh; width: 100vw"
   >
     <h1>Login</h1>
+    <div style="color: red">@error</div>
     <div
       class=""
       style="
@@ -79,7 +83,7 @@
               <div style="font-weight: bold; font-size: large">Login</div>
             </button>
 
-                              <button class="btn btn-primary mb-2" style="width: 28vw; font-weight: bold; font-size: large" type="button" onclick="redirectToExternalLogin()">
+            <button class="btn btn-danger mb-2" style="width: 28vw; font-weight: bold; font-size: large" type="button" onclick="redirectToExternalLogin()">
    <div style="font-weight: bold; font-size: large">Log in with Google</div>
 </button>
             <div class="d-flex justify-content-between">

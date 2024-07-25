@@ -39,13 +39,15 @@
   }
 
   <body style="background-color: #f7f7f7; width: 100vw; overflow-x: hidden;">
-        <div style="height: 64px; background-color: white">
+        <div style="height: 64px; background-color: #f2cae054" class="shadow-lg">
 
             <div class="">
                 <div class="row">
                     <div class="col-1">
                     </div>
                     <div class="col-1">
+                        <img class="w-75" style="margin-top: -17px; margin-left: -30px" src="https://scontent.xx.fbcdn.net/v/t1.15752-9/451041827_1213677422966285_6727441837747369068_n.png?_nc_cat=106&ccb=1-7&_nc_sid=0024fc&_nc_eui2=AeEWrPzvouc3Fbb0tsQUCRB9CPWwS8NVL80I9bBLw1UvzdLh4n6EcLi-wsE2DM6OuR2hwBhg5EgRhNxeaAce1Rrb&_nc_ohc=CNmJ29F_4X4Q7kNvgFEnQJ8&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_Q7cD1QGo0u6YCghRkcbY_JaEcmkZScLcxGFAR8IBnTYMuIB2dg&oe=66C9ECFA" alt="Alternate Text" />
+
                     </div>
                     <div class="col-1 d-flex justify-content-end align-items-center " style="height: 64px;">
                         <a href="@Url.Action("Index", "Home")" class="btn" style="margin-left: 20px; margin-right: 20px; border: none">
@@ -71,9 +73,8 @@
                     </div>
                     <div class="col-1">
                     </div>
-                    <div class="col-1">
-                    </div>
-                    <div class="col-4 d-flex justify-content-end align-items-center " style="height: 64px;">
+                   
+                    <div class="col-5 d-flex justify-content-end align-items-center " style="height: 64px;">
                        
                         @if (loggedInAccount != null)
                         {
@@ -82,10 +83,12 @@
                                  width="40"
                                  height="40"
                                  class="rounded-circle mx-4" />
-                            <h3 class="mx-4">@loggedInAccount.UserName</h3>
-                            <div>
-                                <a class="btn btn-success" href="@Url.Action("Cart", "Order")">Cart</a>
-                            </div>
+                            <h4 class="mx-4">@loggedInAccount.UserName</h4>
+                             <div>
+                              <a class="" href="@Url.Action("Cart", "Order")"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-basket" viewBox="0 0 16 16" style="color: pink">
+  <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9zM1 7v1h14V7zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5m2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5"/>
+</svg></a>
+                          </div>
                             <a href="@Url.Action("logout", "Account")" class="btn btn-danger" style="margin-left: 20px; margin-right: 20px;">
                                 Logout
                             </a>
