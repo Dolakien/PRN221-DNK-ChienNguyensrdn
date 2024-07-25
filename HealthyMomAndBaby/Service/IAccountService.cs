@@ -14,9 +14,8 @@ namespace HealthyMomAndBaby.Service
         Task<Account> GetUserById(int id);
         Task<Account?> GetDetailProductAsync(int id);
         Task<Account?> GetAccountByEmailAsync(string email);
-        Task<bool> ResetPassword(ResetPasswordRequest resetPasswordRequest);
-        Task<bool> UpdatePassword(PasswordRequest passwordRequest);
-        Task<bool> SendResetPasswordEmail(string email);
+        Task<bool> ResetPassword(SendEmailRequest sendEmailRequest);
+        Task<bool> UpdatePassword(SendEmailRequest sendEmailRequest);
 
 
     }
