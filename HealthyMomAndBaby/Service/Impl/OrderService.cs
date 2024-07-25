@@ -1,7 +1,14 @@
-﻿using HealthyMomAndBaby.Entity;
+﻿using HealthyMomAndBaby.Common;
+using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.InterFaces.Repository;
 using HealthyMomAndBaby.Models.Request;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MimeKit;
+using MailKit.Net.Smtp;
+using System.Threading.Tasks;
+using System;
 
 namespace HealthyMomAndBaby.Service.Impl
 {
@@ -9,12 +16,17 @@ namespace HealthyMomAndBaby.Service.Impl
     {
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<Account> _accountRepository; 
-        public OrderService(IRepository<Order> orderRepository, IRepository<Product> productRepository, IRepository<Account> accountRepository)
+        private readonly IRepository<Account> _accountRepository;
+        private readonly IAccountService _accountService;
+        private readonly SmtpSettings _smtpsetting;
+
+        public OrderService(IRepository<Order> orderRepository, IRepository<Product> productRepository, IRepository<Account> accountRepository, IOptions<SmtpSettings> smtpsetting, IAccountService accountService)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
             _accountRepository = accountRepository;
+            _smtpsetting = smtpsetting.Value;
+            _accountService = accountService;
         }
 
         public async Task AddOrderAsync(CheckoutRequest order)
@@ -58,6 +70,8 @@ namespace HealthyMomAndBaby.Service.Impl
 
             await _orderRepository.AddAsync(newOrder);
             await _orderRepository.SaveChangesAsync();
+
+            await SendResetPasswordEmail(account.Id);
         }
 
         public async Task DeleteOrderAsync(int id)
@@ -89,6 +103,8 @@ namespace HealthyMomAndBaby.Service.Impl
             return await _orderRepository.Get().Include(x => x.User).ToListAsync();
         }
 
+
+
         public async Task UpdateOrderAsync(Order order)
         {
             if (order == null)
@@ -107,6 +123,49 @@ namespace HealthyMomAndBaby.Service.Impl
             _orderRepository.Update(order);
             await _orderRepository.SaveChangesAsync();
 
+        }
+
+        public async Task<bool> SendResetPasswordEmail(int id)
+        {
+            var account = await _accountService.GetDetailProductAsync(id);
+            if (account == null)
+            {
+                return false;
+            }
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("HealthyMomAndBaby System", _smtpsetting.Username));
+            message.To.Add(new MailboxAddress("", account.Email));
+            message.Subject = "Reset Your Password";
+
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = $@"
+                <p>Dear {account.UserName},</p>
+                <p>Your Order has been successfully ordered.</p>
+                <p>If you did not make this change, please contact support immediately.</p>
+                <p>Thank you,</p>
+            ";
+
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using (var client = new SmtpClient())
+            {
+                try
+                {
+                    client.Connect(_smtpsetting.SmtpServer, _smtpsetting.Port, _smtpsetting.UseSsl);
+                    client.Authenticate(_smtpsetting.Username, _smtpsetting.Password);
+                    await client.SendAsync(message);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                    return false;
+                }
+                finally
+                {
+                    await client.DisconnectAsync(true);
+                }
+            }
         }
     }
 }

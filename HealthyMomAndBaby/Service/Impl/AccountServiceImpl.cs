@@ -276,50 +276,7 @@ namespace HealthyMomAndBaby.Service.Impl
             }
         }
 
-        //private async Task SendEmail(int Id)
-        //{
-        //    var member = await GetUserById(Id);
-        //    if (member == null || string.IsNullOrEmpty(member.Email))
-        //    {
-        //        throw new Exception($"Member with FeId {Id} not found or has no email specified.");
-        //    }
 
-        //    var message = new MimeMessage();
-        //    message.From.Add(new MailboxAddress("Healthy Mom And Baby", _smtpsetting.Username));
-        //    message.To.Add(new MailboxAddress(member.UserName, member.Email));
-        //    message.Subject = "Re-authenticate";
-
-        //    var bodyBuilder = new BodyBuilder();
-        //    bodyBuilder.HtmlBody = $@"
-        //    <p>Dear {member.UserName},</p>
-        //    <p>I would like to inform you that you need to re-authenticate your account.</p>
-
-        //    <p>Thank you for using our platform!</p>
-        //    <p>Best regards,</p>
-        //    <p>Healthy Mom And BabyTeam</p>
-        //";
-
-        //    message.Body = bodyBuilder.ToMessageBody();
-
-        //    using (var client = new SmtpClient())
-        //    {
-        //        try
-        //        {
-        //            client.Connect(_smtpsetting.SmtpServer, _smtpsetting.Port, _smtpsetting.UseSsl);
-        //            client.Authenticate(_smtpsetting.Username, _smtpsetting.Password);
-        //            await client.SendAsync(message);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine($"Failed to send email: {ex.Message}");
-        //            throw;
-        //        }
-        //        finally
-        //        {
-        //            await client.DisconnectAsync(true);
-        //        }
-        //    }
-        //}
     }
 }
 
