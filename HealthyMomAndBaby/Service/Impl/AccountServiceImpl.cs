@@ -1,8 +1,16 @@
-﻿using HealthyMomAndBaby.Entity;
+﻿using HealthyMomAndBaby.Common;
+using HealthyMomAndBaby.Entity;
 using HealthyMomAndBaby.InterFaces.Repository;
 using HealthyMomAndBaby.Models.Request;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
+using MailKit.Net.Smtp;
 using static NuGet.Packaging.PackagingConstants;
+using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 
 namespace HealthyMomAndBaby.Service.Impl
@@ -11,13 +19,15 @@ namespace HealthyMomAndBaby.Service.Impl
 	{
         private readonly IRepository<Account> _accountRepository;
 		private readonly IRepository<Role> _roleRepository;
+        private readonly SmtpSettings _smtpsetting;
         private readonly IRepository<Order> _orderRepositry;
 
-        public AccountServiceImpl(IRepository<Account> repository,IRepository<Role> roleRepository,  IRepository<Order> orderRepositry)
+        public AccountServiceImpl(IRepository<Account> repository,IRepository<Role> roleRepository,  IRepository<Order> orderRepositry, IOptions<SmtpSettings> smtpSetting)
 		{
 			_accountRepository = repository;
             _orderRepositry = orderRepositry;
             _roleRepository = roleRepository;
+            _smtpsetting = smtpSetting.Value;
         }
 
         public async Task AddAccountAsync(CreateUser account)
@@ -55,6 +65,17 @@ namespace HealthyMomAndBaby.Service.Impl
         {
             return await _accountRepository.Get().Where(x => x.Email == email).FirstOrDefaultAsync();
         }
+
+        public async Task<Account?> GetAccountByUserNameAsync(string user)
+        {
+            return await _accountRepository.Get().Where(x => x.UserName == user).FirstOrDefaultAsync();
+        }
+
+        public async Task<Account> GetUserById(int id)
+        {
+            return await _accountRepository.Get().Include(x => x.Role).FirstAsync(x => x.Id == id);
+        }
+
 
         public async Task<Account?> GetDetailProductAsync(int id)
         {
@@ -96,7 +117,8 @@ namespace HealthyMomAndBaby.Service.Impl
                     Password = password, // Storing password directly
                     Email = email,
                     Point = 0,
-                    Role = role
+                    Role = role,
+                    Status = true,              
                 };
 
                 await _accountRepository.AddAsync(account);
@@ -141,10 +163,163 @@ namespace HealthyMomAndBaby.Service.Impl
             await _accountRepository.SaveChangesAsync();
         }
 
-        public async Task<Account> GetUserById(int id)
+
+
+
+        public async Task<bool> ResetPassword(ResetPasswordRequest resetPassword)
         {
-            return await _accountRepository.Get().Include(x => x.Role).FirstAsync(x => x.Id == id);
+            var account = await GetAccountByUserNameAsync(resetPassword.UserName);
+            if (account == null)
+            {
+                return false;
+            }
+
+            if (resetPassword.NewPassword != resetPassword.ConfirmNewPassword)
+            {
+                return false;
+            }
+
+            var passwordRequest = new PasswordRequest
+            {
+                UserName = resetPassword.UserName,
+                NewPassword = resetPassword.NewPassword,
+                ConfirmPassword = resetPassword.ConfirmNewPassword
+            };
+
+            var isUpdate = await UpdatePassword(passwordRequest);
+
+            await SendResetPasswordEmail(account.Email);
+
+            return isUpdate;
         }
+
+
+
+        public async Task<bool> UpdatePassword(PasswordRequest passwordRequest)
+        {
+            var account = await GetAccountByUserNameAsync(passwordRequest.UserName);
+
+
+            if (account == null)
+            {
+                return false;
+            }
+            // check old password
+            if (account.UserName == passwordRequest.UserName)
+            {
+                account.Password = passwordRequest.NewPassword;
+                await UpdateAccountPassword(account);
+                await _accountRepository.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+
+        public async Task UpdateAccountPassword(Account account)
+        {
+            if (account == null)
+            {
+                throw new ArgumentNullException(nameof(account));
+            }
+
+            var existingAccount = await GetAccountByUserNameAsync(account.UserName);
+            if (existingAccount == null)
+            {
+                throw new InvalidOperationException($"Account with UserName {account.UserName} not found.");
+            }
+            _accountRepository.Update(existingAccount);  // Update method is synchronous
+            await _accountRepository.SaveChangesAsync();
+        }
+
+
+        public async Task<bool> SendResetPasswordEmail(string email)
+        {
+            var account = await GetAccountByEmailAsync(email);
+            if (account == null)
+            {
+                return false;
+            }
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("HealthyMomAndBaby System", _smtpsetting.Username));
+            message.To.Add(new MailboxAddress("", email));
+            message.Subject = "Reset Your Password";
+
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = $@"
+                <p>Dear {account.UserName},</p>
+                <p>Your password has been successfully changed.</p>
+                <p>If you did not make this change, please contact support immediately.</p>
+                <p>Thank you,</p>
+            ";
+
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using (var client = new SmtpClient())
+            {
+                try
+                {
+                    client.Connect(_smtpsetting.SmtpServer, _smtpsetting.Port, _smtpsetting.UseSsl);
+                    client.Authenticate(_smtpsetting.Username, _smtpsetting.Password);
+                    await client.SendAsync(message);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                    return false;
+                }
+                finally
+                {
+                    await client.DisconnectAsync(true);
+                }
+            }
+        }
+
+        //private async Task SendEmail(int Id)
+        //{
+        //    var member = await GetUserById(Id);
+        //    if (member == null || string.IsNullOrEmpty(member.Email))
+        //    {
+        //        throw new Exception($"Member with FeId {Id} not found or has no email specified.");
+        //    }
+
+        //    var message = new MimeMessage();
+        //    message.From.Add(new MailboxAddress("Healthy Mom And Baby", _smtpsetting.Username));
+        //    message.To.Add(new MailboxAddress(member.UserName, member.Email));
+        //    message.Subject = "Re-authenticate";
+
+        //    var bodyBuilder = new BodyBuilder();
+        //    bodyBuilder.HtmlBody = $@"
+        //    <p>Dear {member.UserName},</p>
+        //    <p>I would like to inform you that you need to re-authenticate your account.</p>
+
+        //    <p>Thank you for using our platform!</p>
+        //    <p>Best regards,</p>
+        //    <p>Healthy Mom And BabyTeam</p>
+        //";
+
+        //    message.Body = bodyBuilder.ToMessageBody();
+
+        //    using (var client = new SmtpClient())
+        //    {
+        //        try
+        //        {
+        //            client.Connect(_smtpsetting.SmtpServer, _smtpsetting.Port, _smtpsetting.UseSsl);
+        //            client.Authenticate(_smtpsetting.Username, _smtpsetting.Password);
+        //            await client.SendAsync(message);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine($"Failed to send email: {ex.Message}");
+        //            throw;
+        //        }
+        //        finally
+        //        {
+        //            await client.DisconnectAsync(true);
+        //        }
+        //    }
+        //}
     }
 }
 

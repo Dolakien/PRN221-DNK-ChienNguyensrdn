@@ -207,6 +207,23 @@ namespace HealthyMomAndBaby.Controllers
             return LocalRedirect(returnUrl ?? "/");
 
         }
+
+        [HttpGet("ForgotPassword")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ResetPasswordRequest resetPassword)
+        {
+            var isUpdate = await _accountService.ResetPassword(resetPassword);
+            if(!isUpdate)
+            {
+                return View("ForgotPassword");
+            }
+            return View("Login");
+        }
     }
 }
 
